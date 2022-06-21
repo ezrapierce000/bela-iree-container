@@ -41,6 +41,7 @@ rm -rf /var/lib/apt/lists/*
 cd /workspace
 git clone https://github.com/ezrapierce000/bela-ai-toolbench.git
 git checkout torch-example
+git submodule update --init --recursive
 
 
 echo "Finishing up..."
