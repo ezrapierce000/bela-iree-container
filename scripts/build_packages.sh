@@ -9,8 +9,10 @@ echo "deb http://http.us.debian.org/debian/ bullseye main contrib non-free" >> /
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
 
 # add conan repo
-wget -qO - https://releases.jfrog.io/artifactory/api/gpg/key/public | apt-key add -
-echo "deb https://releases.jfrog.io/artifactory/artifactory-debs bullseye main" | sudo tee -a /etc/apt/sources.list
+# wget -qO - https://releases.jfrog.io/artifactory/api/gpg/key/public | apt-key add -
+# echo "deb https://releases.jfrog.io/artifactory/artifactory-debs buster main" >>  /etc/apt/sources.list.d/conan.list
+wget https://github.com/conan-io/conan/releases/latest/download/conan-ubuntu-64.deb
+dpkg -i conan-ubuntu-64.deb
 
 apt-get update
 
@@ -31,7 +33,6 @@ apt-get install --no-install-recommends -y \
 	cmake \
 	git \
 	gdb \
-	conan \
 
 
 rm -rf /var/lib/apt/lists/*

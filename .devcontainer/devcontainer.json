@@ -1,9 +1,9 @@
 // For format details, see https://aka.ms/vscode-remote/devcontainer.json or this file's README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.112.0/containers/docker-existing-dockerfile
 {
-	"name": "xc-bela",
+	"name": "xc-bela-with-conan",
 	"context": ".",
-	"image": "rodrigodzf/xc-bela:latest",
+	"image": "xc-bela:with-conan",
 	"workspaceFolder": "/workspace",
 	"settings": {
 		"terminal.integrated.shell.linux": "/bin/bash",
