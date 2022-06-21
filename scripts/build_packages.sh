@@ -37,4 +37,10 @@ apt-get install --no-install-recommends -y \
 
 rm -rf /var/lib/apt/lists/*
 
+
+cd /workspace
+git clone https://github.com/ezrapierce000/bela-ai-toolbench.git
+git checkout torch-example
+
+
 echo "Finishing up..."
