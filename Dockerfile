@@ -7,8 +7,8 @@ COPY scripts/build_bela.sh \
 	scripts/build_settings \
 	./
 
-RUN ./build_packages.sh && rm build_packages.sh
-RUN ./build_bela.sh && rm build_bela.sh && rm build_settings
-RUN ./build_env.sh && rm build_env.sh
+RUN ./build_packages.sh
+RUN ./build_bela.sh 
+RUN ./build_env.sh
 
 CMD /bin/bash
