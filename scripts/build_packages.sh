@@ -39,9 +39,7 @@ rm -rf /var/lib/apt/lists/*
 
 
 cd /workspace
-git clone https://github.com/ezrapierce000/bela-ai-toolbench.git
-git checkout torch-example
-git submodule update --init --recursive
+git clone https://github.com/iree-org/iree.git
 
 
 echo "Finishing up..."
