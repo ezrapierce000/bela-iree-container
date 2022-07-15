@@ -1,6 +1,7 @@
-# xc-bela-container
+# WIP:bela-iree-benchmark-container
 
-Docker image/VSCode environment for [Bela](https://bela.io/) development and cross-compilation. Uses GCC 10, CMake and Make for a fast and modular builds.
+
+This project is based on a fork of the [xc-bela-container](https://github.com/rodrigodzf/xc-bela-container) project, with added setup for becnhmarking IREE machine learning models on Bela.
 
 By containerizing the cross-compilation toolchain, Bela code can be written and compiled on any host OS that can run Docker, and is compiled much faster and with more flexibility than in the Bela IDE. The VSCode environment is also set up for running GDB over SSH, allowing you to debug your Bela programs in the editor.
 
@@ -13,29 +14,14 @@ This repo is set up to run the image as a VSCode development container. It shoul
 Install [Docker](https://docs.docker.com/get-docker/) and the [Remote Development](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) extensions, if you haven't already. Clone the repo to your machine:
 
 ```shell
-git clone --recurse-submodules https://github.com/ebai101/xc-bela-container.git
+git clone --recurse-submodules https://github.com/ezrapierce000/xc-bela-container.git
 ```
 
 Open the repo folder in VSCode and run the command `Remote-Containers: Reopen in Container`  or click the popup when prompted. This will download the image, install a few extensions and attach the editor to the container.
 
-The workspace is stored as a Docker volume to improve disk performance, so it will be empty by default. There's a template repo to get you running quickly, so open an integrated terminal in VSCode (the command is `Terminal: Create New Integrated Terminal`) and clone the template repo:
-
-```shell
-git clone --recurse-submodules https://github.com/rodrigodzf/DeepLearningForBela
-```
 
 <!-- The workspace will contain a workspace file called `xc-bela-boostrap.code-workspace`, click on that and choose "Open Workspace." The window will reload and CMake should automatically reconfigure the project. (If it shows an error that says "error: unknown target CPU 'armv7-a'", that's just a bug in the script - run the configuration again and it should work.) -->
 
-You can use the CMake extension to configure and build now, or do it from the terminal:
-
-```shell
-mkdir build # if it doesn't exist already
-cd build
-cmake -DCMAKE_TOOLCHAIN_FILE=../Toolchain.cmake ../
-cmake --build .
-```
-
-After a successful build, the binary (in `build/bin`) will be copied via `scp` to the attached Bela at the IP address `BBB_HOSTNAME` (as specified in your env file.)
 
 ### Extensions
 
@@ -59,7 +45,6 @@ Extensions are stored on a Docker volume, so they will persist through container
 `.devcontainer/devcontainer.env` contains important environment variables that you should set before building the container:
 
 - **BBB_HOSTNAME** - set this to the IP address of your Bela (could be 192.168.6.2, 192.168.7.2, etc)
-- there will be others I imagine
 
 You can set any other variables you wish in this file; they will all be sourced when the container starts up.
 
@@ -92,17 +77,9 @@ Finally, update `.devcontainer/devcontainer.json` to use your custom build:
 ...
 ```
 
-## Contributing
-
-I am developing/testing on macOS, so if any Windows/Linux users have issues and/or fixes for issues on their platform, I'd love to hear them. I'm also open to any methods to get the image size down (it's currently around 1.5 GB!) and anyone willing to improve the CMake setup, as I am still a CMake noob.
-
-The Bela submodule in the repo is currently my personal fork; it has been modified (based on [this PR](https://github.com/BelaPlatform/Bela/pull/626)) to build a single static library containing all Bela object files. Once [this commit](https://github.com/BelaPlatform/Bela/commit/74eb2a59738e16ae3057e3978b115bbbcf030881) allowing custom Makefile hooks is merged into the master, Makefile, we can probably move back to the base repo.
 
 ## Credits
 
 All credit for the Bela code goes to Bela and Augmented Instruments Ltd. As per the license terms, this project is also licensed under the LGPLv3.
 
-The cross-compiler setup is based on/inspired by TheTechnoBear's [xcBela](https://github.com/TheTechnobear/xcBela). Initially I was working on this as a fork of his repo - many thanks to him for laying the groundwork.
-
-Also of note is Andrew Capon's [OSXBelaCrossCompiler](https://github.com/AndrewCapon/OSXBelaCrossCompiler) and the related [Bela Wiki](https://github.com/BelaPlatform/Bela/wiki/Compiling-Bela-projects-in-Eclipse) page for Eclipse.
-
+This project is based on a fork of the xc-bela-container [project](https://github.com/rodrigodzf/xc-bela-container). 
