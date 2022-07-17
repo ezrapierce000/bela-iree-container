@@ -33,6 +33,7 @@ apt-get install --no-install-recommends -y \
 	cmake \
 	git \
 	gdb \
+	ccache
 
 
 rm -rf /var/lib/apt/lists/*
@@ -40,6 +41,8 @@ rm -rf /var/lib/apt/lists/*
 
 cd /workspace
 git clone https://github.com/iree-org/iree.git
+cd iree
+# build iree host here
 
 
 echo "Finishing up..."
