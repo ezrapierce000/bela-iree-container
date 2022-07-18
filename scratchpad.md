@@ -1,10 +1,21 @@
 # Scratchpad of commands used to build IREE for Bela
 
+See IREE docs [here](https://github.com/iree-org/iree/blob/main/docs/developers/get_started/cmake_options_and_variables.md) for an overview of CMake flags.
 
 ## Host builds
 
+	cmake -GNinja -B ../iree-build/ -S . \
+	    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+	    -DIREE_ENABLE_ASSERTIONS=ON \
+	    -DCMAKE_C_COMPILER=clang \
+	    -DCMAKE_CXX_COMPILER=clang++ \
+	    -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+	    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
 ## Device builds
+
+
+
 
 ## Importing models
 

@@ -33,7 +33,8 @@ apt-get install --no-install-recommends -y \
 	ssh \
 	git \
 	gdb \
-	ccache
+	ccache \
+	python3
 
 
 rm -rf /var/lib/apt/lists/*
