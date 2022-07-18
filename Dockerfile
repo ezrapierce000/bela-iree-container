@@ -3,6 +3,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 ADD scripts/ ./scripts/
 ADD cmake/ ./cmake/
+ADD iree/ ./iree/
 
 
 RUN ./scripts/build_packages.sh
