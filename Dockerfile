@@ -1,8 +1,8 @@
 FROM debian:bullseye
 ENV DEBIAN_FRONTEND noninteractive
 
-ADD scripts/ .
-ADD cmake/ .
+ADD scripts/ ./scripts/
+ADD cmake/ ./cmake/
 
 
 RUN ./scripts/build_packages.sh
