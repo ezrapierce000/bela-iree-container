@@ -4,9 +4,7 @@ apt-get update
 apt-get install -y wget gpg apt-utils #apt-transport-https ca-certificates
 
 # Add llvm and debian repos
-echo "deb http://apt.llvm.org/bullseye/ llvm-toolchain-bullseye main" >> /etc/apt/sources.list.d/llvm.list
 echo "deb http://http.us.debian.org/debian/ bullseye main contrib non-free" >> /etc/apt/sources.list.d/bullseye.list
-wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
 
 # Installing CMake 3.23
 wget https://github.com/Kitware/CMake/releases/download/v3.23.2/cmake-3.23.2-linux-x86_64.sh
@@ -18,8 +16,6 @@ cmake --version
 apt-get update
 
 apt-get install --no-install-recommends -y \
-	clang \
-	clangd \
 	ninja-build \
 	coreutils \
 	linux-libc-dev-armhf-cross \
@@ -33,10 +29,14 @@ apt-get install --no-install-recommends -y \
 	ssh \
 	git \
 	gdb \
+	vim \
 	ccache \
-	python3
+	python3 \
+	lsb-release \
+	wget \
+	software-properties-common
 
-
+bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
 rm -rf /var/lib/apt/lists/*
 
 echo "Finishing up..."

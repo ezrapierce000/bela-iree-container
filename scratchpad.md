@@ -4,7 +4,7 @@ See IREE docs [here](https://github.com/iree-org/iree/blob/main/docs/developers/
 
 ## Host builds
 
-	cmake -GNinja -B ../iree-build/ -S . \
+	cmake  -B ../iree-build/ -S . \
 	    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
 	    -DIREE_ENABLE_ASSERTIONS=ON \
 	    -DCMAKE_C_COMPILER=clang \
