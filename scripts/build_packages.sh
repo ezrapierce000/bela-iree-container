@@ -8,11 +8,11 @@ echo "deb http://apt.llvm.org/bullseye/ llvm-toolchain-bullseye main" >> /etc/ap
 echo "deb http://http.us.debian.org/debian/ bullseye main contrib non-free" >> /etc/apt/sources.list.d/bullseye.list
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
 
-# Installing CMake 3.24
-wget https://github.com/Kitware/CMake/releases/download/v3.24.0-rc3/cmake-3.24.0-rc3-linux-x86_64.sh
-chmod +x cmake-3.24.0-rc3-linux-x86_64.sh
-yes | ./cmake-3.24.0-rc3-linux-x86_64.sh
-ln -s /cmake-3.24.0-rc3-linux-x86_64/bin/cmake /usr/bin/cmake
+# Installing CMake 3.23
+wget https://github.com/Kitware/CMake/releases/download/v3.23.2/cmake-3.23.2-linux-x86_64.sh
+chmod +x cmake-3.23.2-linux-x86_64.sh
+yes | ./cmake-3.23.2-linux-x86_64.sh
+ln -s /cmake-3.23.2-linux-x86_64/bin/cmake /usr/bin/cmake
 cmake --version
 
 apt-get update
