@@ -1,13 +1,9 @@
 # WIP:bela-iree-benchmark-container
 
+This project is based on a fork of the [xc-bela-container](https://github.com/rodrigodzf/xc-bela-container) project with added support for IREE projects on Bela. The image comes with IREE host binaries pre-installed, some IREE tools cross-compiled for Bela, a CMake toolchain for building IREE runtime components as well as instructions for benchmarking and profiling IREE programs. Please see the [IREE project](https://iree-org.github.io/iree/) for more details on IREE.
 
-This project is based on a fork of the [xc-bela-container](https://github.com/rodrigodzf/xc-bela-container) project, with added setup for benchmarking IREE machine learning models on Bela.
+By containerizing the cross-compilation toolchain, Bela code can be written and compiled on any host OS that can run Docker, and is compiled much faster and with more flexibility than in the Bela IDE. The VSCode environment is also set up for running GDB over SSH, allowing you to debug your Bela programs in the editor. This repo is set up to be used with VSCode.
 
-By containerizing the cross-compilation toolchain, Bela code can be written and compiled on any host OS that can run Docker, and is compiled much faster and with more flexibility than in the Bela IDE. The VSCode environment is also set up for running GDB over SSH, allowing you to debug your Bela programs in the editor.
-
-## Usage
-
-This repo is set up to run the image as a VSCode development container. It should be able to work with other editors/IDEs with some setup, or even just as a terminal. However, the following instructions assume you're using VSCode.
 
 ### Quickstart
 
@@ -17,7 +13,22 @@ Install [Docker](https://docs.docker.com/get-docker/) and the [Remote Developmen
 git clone --recurse-submodules https://github.com/ezrapierce000/xc-bela-container.git
 ```
 
-Open the repo folder in VSCode and run the command `Remote-Containers: Reopen in Container`  or click the popup when prompted. This will download the image, install a few extensions and attach the editor to the container.
+Open the repo folder in VSCode and run the command `Remote-Containers: Reopen in Container`  or click the popup when prompted, ensure that the environment variables are set accordingly based on the Environment Variables section. This will download the image, install a few extensions and attach the editor to the container.
+
+Once the Docker container has been opened, move to /home/scripts, ensure your Bela is connected and execute the benchmark-test.sh script. This will copy over the iree-benchmark-module tool to your Bela along with a compiled test IREE .vmfb file and run a benchmark. The output should be similar to this IMAGE HERE.
+
+## Performance analysis
+
+### Benchmarking using iree-benchmark-module
+
+[IREE docs](https://github.com/iree-org/iree/blob/main/docs/developers/developing_iree/benchmarking.md)
+
+TBD
+
+### Profiling using Tracy
+[IREE docs](https://github.com/iree-org/iree/blob/main/docs/developers/developing_iree/profiling_with_tracy.md)
+
+TBD
 
 
 <!-- The workspace will contain a workspace file called `xc-bela-boostrap.code-workspace`, click on that and choose "Open Workspace." The window will reload and CMake should automatically reconfigure the project. (If it shows an error that says "error: unknown target CPU 'armv7-a'", that's just a bug in the script - run the configuration again and it should work.) -->
