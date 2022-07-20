@@ -18,7 +18,7 @@ git clone --recurse-submodules https://github.com/ezrapierce000/bela-iree-contai
 ```
 
 
-Open the repo folder in VSCode and run the command `Remote-Containers: Reopen in Container`  or click the popup when prompted. This will download the image, install a few extensions and attach the editor to the container.
+Open the repo folder in VSCode and run the command `Remote-Containers: Reopen in Container`  or click the popup when prompted, ensure that the environment variables are set accordingly based on the Environment Variables section. This will download the image, install a few extensions and attach the editor to the container.
 
 
 <!-- The workspace will contain a workspace file called `xc-bela-boostrap.code-workspace`, click on that and choose "Open Workspace." The window will reload and CMake should automatically reconfigure the project. (If it shows an error that says "error: unknown target CPU 'armv7-a'", that's just a bug in the script - run the configuration again and it should work.) -->
@@ -61,6 +61,8 @@ If the Bela needs to be updated (e.g. if the static libraries haven't been compi
 Bela/scripts/update_board.sh
 scripts/build_libs.sh
 ```
+
+Ensure that the IREE submodule was properly cloned by running  `git submodule update --init`.
 
 You will only need to do this once, unless you change any of the core library code. Make any changes you wish to the scripts/Dockerfile, then start the build:
 
