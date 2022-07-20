@@ -34,7 +34,10 @@ apt-get install --no-install-recommends -y \
 	python3 \
 	lsb-release \
 	wget \
-	software-properties-common
+	software-properties-common \
+	libcapstone-dev \
+       	libtbb-dev \ 
+       	libzstd-dev
 
 bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
 rm -rf /var/lib/apt/lists/*
