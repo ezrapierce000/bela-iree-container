@@ -36,8 +36,9 @@ apt-get install --no-install-recommends -y \
 	wget \
 	software-properties-common \
 	libcapstone-dev \
-       	libtbb-dev \ 
-       	libzstd-dev
+	libtbb-dev \
+       	libzstd-dev \
+	pkg-config
 
 bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
 rm -rf /var/lib/apt/lists/*
