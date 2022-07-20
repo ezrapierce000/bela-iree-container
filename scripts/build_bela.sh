@@ -1,5 +1,5 @@
 #!/bin/bash -e
-source build_settings
+source scripts/build_settings
 BBB_ADDRESS=root@$BBB_HOSTNAME
 
 # pre-register ssh key

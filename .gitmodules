@@ -2,3 +2,6 @@
 	path = Bela
 	url = git@github.com:rodrigodzf/Bela.git
 	branch = feat/configureSampleRate
+[submodule "iree"]
+	path = iree
+	url = https://github.com/iree-org/iree.git

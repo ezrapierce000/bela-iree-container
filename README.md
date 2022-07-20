@@ -1,7 +1,7 @@
 # WIP:bela-iree-benchmark-container
 
 
-This project is based on a fork of the [xc-bela-container](https://github.com/rodrigodzf/xc-bela-container) project, with added setup for becnhmarking IREE machine learning models on Bela.
+This project is based on a fork of the [xc-bela-container](https://github.com/rodrigodzf/xc-bela-container) project, with added setup for benchmarking IREE machine learning models on Bela.
 
 By containerizing the cross-compilation toolchain, Bela code can be written and compiled on any host OS that can run Docker, and is compiled much faster and with more flexibility than in the Bela IDE. The VSCode environment is also set up for running GDB over SSH, allowing you to debug your Bela programs in the editor.
 
