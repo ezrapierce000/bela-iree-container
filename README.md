@@ -14,8 +14,9 @@ This repo is set up to run the image as a VSCode development container. It shoul
 Install [Docker](https://docs.docker.com/get-docker/) and the [Remote Development](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) extensions, if you haven't already. Clone the repo to your machine:
 
 ```shell
-git clone --recurse-submodules https://github.com/ezrapierce000/xc-bela-container.git
+git clone --recurse-submodules https://github.com/ezrapierce000/bela-iree-container.git
 ```
+
 
 Open the repo folder in VSCode and run the command `Remote-Containers: Reopen in Container`  or click the popup when prompted. This will download the image, install a few extensions and attach the editor to the container.
 
