@@ -50,11 +50,26 @@ As outlined in the IREE [docs](https://iree-org.github.io/iree/#workflow-overvie
 3. Compile your model
 4. Run your model
 
-The following sections document a workflow for steps 1-3 for Bela.
+The following sections document a workflow for steps 1-3 for Bela. For running IREE projects in a Bela project please see the [bela-iree-runtime](https://github.com/ezrapierce000/bela-iree-runtime) project.
 
 ### Importing your model
 
-*TFLite*: IREE provides an importing tool for TFLite models `iree-import-tflite`
+You must first import your model into a [MLIR](https://mlir.llvm.org/) dialect which can then be compiled by IREE. This is well supported for TFLite and PyTorch importing is also being worked on with the [Torch-MLIR](https://github.com/llvm/torch-mlir) project.
+
+*TFLite*: IREE provides an importing tool for TFLite models `iree-import-tflite`. Installation (TODO: provide installation in Docker container):
+```
+python -m pip install iree-tools-tflite
+```
+
+This tool will import your TFLite model into the [TOSA dialect](https://mlir.llvm.org/docs/Dialects/TOSA/). You can find more in depth docs about using TFLite with IREE [here](https://iree-org.github.io/iree/getting-started/tflite/), but to get started importing a TFLite model to MLIR, run the following command:
+
+```
+iree-import-tflite /path/to/tflite/model.tflite -o /path/to/mlir/model/output.mlir
+```
+
+### Compiling your model for Bela
+
+
 
 ## Performance analysis
 
