@@ -14,7 +14,7 @@ See IREE docs [here](https://github.com/iree-org/iree/blob/main/docs/developers/
 
 ## Device builds
 
-cmake -B build/ -S . \
+cmake -B /opt/iree-device-build/ -S . \
 	-DCMAKE_TOOLCHAIN_FILE="/home/cmake/Toolchain.cmake" \
 	-DIREE_HOST_BINARY_ROOT="/opt/iree-host-build" \
 	-DIREE_BUILD_COMPILER=OFF \

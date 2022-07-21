@@ -1,5 +1,5 @@
 #!/bin/bash -e
-source scripts/build_settings
+source /home/scripts/docker-build/build_settings
 BBB_ADDRESS=root@$BBB_HOSTNAME
 
 # pre-register ssh key

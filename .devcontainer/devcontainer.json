@@ -3,7 +3,7 @@
 {
 	"name": "xc-bela-with-iree",
 	"context": ".",
-	"image": "xc-bela:iree",
+	"image": "ezrapierce000/xc-bela-iree:latest",
 	"workspaceFolder": "/workspace",
 	"settings": {
 		"terminal.integrated.shell.linux": "/bin/bash",
