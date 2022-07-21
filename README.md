@@ -7,16 +7,9 @@ By containerizing the cross-compilation toolchain, Bela code can be written and 
 
 ## Quickstart
 
-First you must clone this git repo, as shown below, and install [Docker](https://docs.docker.com/get-docker/).
+This project is built with Docker, you can see instructions for installing it [here](https://docs.docker.com/get-docker/).
 
-```shell
-git clone --recurse-submodules https://github.com/ezrapierce000/bela-iree-container.git
-```
-
-
-Open the repo folder in VSCode and run the command `Remote-Containers: Reopen in Container`  or click the popup when prompted, ensure that the environment variables are set accordingly based on the Environment Variables section. This will download the image, install a few extensions and attach the editor to the container.
-
-You can now either continue the setup using just the command line or using VSCode, both options are shown below.
+Once Docker is installed, you can continue the setup using just the command line or using VSCode, both options are shown below.
 
 ### Command Line
 
@@ -32,13 +25,18 @@ Then, start and open a shell in the container by running:
 docker run -it ezrapierce000/xc-bela-iree:latest
 ```
 
-Now, with Bela powered on, change directories, `cd /home/scripts` and run a test benchmark on Bela `./benchmark_test.sh`. This test uploads the iree-benchmark-module tool to the Bela and runs a benchmark on a single multiply between two 4xf32 values.
+Now, with Bela powered on, change directories, `cd /home/scripts` and run a test benchmark on Bela `./benchmark_test.sh`. This test uploads the iree-benchmark-module tool to the Bela and runs a benchmark on a single multiply between two 4xfloat32 values.
 
 
 ### VSCode
 
-Install [Docker](https://docs.docker.com/get-docker/) and the [Remote Development](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) extensions, if you haven't already. Clone the repo to your machine:
+To use this Docker image with VSCode, first clone thi repository:
 
+```shell
+git clone --recurse-submodules https://github.com/ezrapierce000/bela-iree-container.git
+```
+
+Install the Docker and [Remote Development](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) extensions, if you haven't already. 
 
 Open the repo folder in VSCode and run the command `Remote-Containers: Reopen in Container`  or click the popup when prompted, ensure that the environment variables are set accordingly based on the Environment Variables section. This will download the image, install a few extensions and attach the editor to the container.
 
@@ -59,7 +57,7 @@ The following sections document a workflow for steps 1-3 for Bela. For running I
 
 You must first import your model into a [MLIR](https://mlir.llvm.org/) dialect which can then be compiled by IREE. This is well supported for TFLite and PyTorch importing is also being worked on with the [Torch-MLIR](https://github.com/llvm/torch-mlir) project.
 
-*TFLite*: IREE provides an importing tool for TFLite models `iree-import-tflite`. This tool will import your TFLite model into the [TOSA dialect](https://mlir.llvm.org/docs/Dialects/TOSA/). You can find more in depth docs about using TFLite with IREE [here](https://iree-org.github.io/iree/getting-started/tflite/), but to get started importing a TFLite model to MLIR, run the following command:
+*TFLite*: IREE provides an importing tool for TFLite models `iree-import-tflite`. This tool comes installed in the container and will import your TFLite model into the [TOSA dialect](https://mlir.llvm.org/docs/Dialects/TOSA/). You can find more in depth docs about using TFLite with IREE [here](https://iree-org.github.io/iree/getting-started/tflite/), but to get started importing a TFLite model to MLIR, run the following command in the Docker container:
 
 ```
 iree-import-tflite /path/to/tflite/model.tflite -o /path/to/mlir/model/output.mlir
@@ -96,7 +94,7 @@ To compile a model from the TOSA dialect (such as models you have imported from 
 
 ## Performance analysis
 
-Now that you have an IREE module compiled, you can benchmark and profile it on Bela. 
+Once you have an IREE module compiled, you can benchmark and profile it on Bela. 
 
 ### Benchmarking using iree-benchmark-module
 
@@ -123,9 +121,6 @@ TODO: Note on how to find entry function name and input sizes.
 [IREE docs](https://github.com/iree-org/iree/blob/main/docs/developers/developing_iree/profiling_with_tracy.md)
 
 TBD
-
-
-<!-- The workspace will contain a workspace file called `xc-bela-boostrap.code-workspace`, click on that and choose "Open Workspace." The window will reload and CMake should automatically reconfigure the project. (If it shows an error that says "error: unknown target CPU 'armv7-a'", that's just a bug in the script - run the configuration again and it should work.) -->
 
 
 ### Extensions
@@ -166,12 +161,12 @@ Bela/scripts/update_board.sh
 scripts/build_libs.sh
 ```
 
-Ensure that the IREE submodule was properly cloned by running  `git submodule update --init`.
+Ensure that the IREE submodule was properly initiated by running  `git submodule update --init`.
 
 You will only need to do this once, unless you change any of the core library code. Make any changes you wish to the scripts/Dockerfile, then start the build:
 
 ```shell
-docker build --tag xc-bela:mybuild .
+docker build --tag xc-bela-iree:mybuild .
 ```
 
 Finally, update `.devcontainer/devcontainer.json` to use your custom build:
@@ -179,7 +174,7 @@ Finally, update `.devcontainer/devcontainer.json` to use your custom build:
 ```json
 ...
 "context": ".",
-"image": "xc-bela:mybuild",
+"image": "xc-bela-iree:mybuild",
 "workspaceFolder": "/workspace",
 ...
 ```
@@ -187,6 +182,7 @@ Finally, update `.devcontainer/devcontainer.json` to use your custom build:
 
 ## Credits
 
+This project is based on a fork of the xc-bela-container [project](https://github.com/rodrigodzf/xc-bela-container).
 All credit for the Bela code goes to Bela and Augmented Instruments Ltd. As per the license terms, this project is also licensed under the LGPLv3.
 
-This project is based on a fork of the xc-bela-container [project](https://github.com/rodrigodzf/xc-bela-container). 
+ 
