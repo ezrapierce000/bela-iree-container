@@ -7,11 +7,35 @@ By containerizing the cross-compilation toolchain, Bela code can be written and 
 
 ### Quickstart
 
-Install [Docker](https://docs.docker.com/get-docker/) and the [Remote Development](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) extensions, if you haven't already. Clone the repo to your machine:
+First you must clone this git repo, as shown below, and install [Docker](https://docs.docker.com/get-docker/).
 
 ```shell
 git clone --recurse-submodules https://github.com/ezrapierce000/xc-bela-container.git
 ```
+
+You can now either continue the setup using just the command line or using VSCode, both options are shown below.
+
+#### Command Line
+
+First, pull the latest docker image:
+
+```shell
+docker pull ezrapierce000/xc-bela-iree:latest
+```
+
+Then, start and open a shell in the container by running:
+
+```shell
+docker run -it ezrapierce000/xc-bela-iree:latest
+```
+
+Now, with Bela powered on, change directories, `cd /home/scripts` and run a test benchmark on Bela `./benchmark_test.sh`. This test uploads the iree-benchmark-module tool to the Bela and runs a benchmark on a single multiply between two 4xf32 values.
+
+
+#### VSCode
+
+Install [Docker](https://docs.docker.com/get-docker/) and the [Remote Development](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) extensions, if you haven't already. Clone the repo to your machine:
+
 
 Open the repo folder in VSCode and run the command `Remote-Containers: Reopen in Container`  or click the popup when prompted, ensure that the environment variables are set accordingly based on the Environment Variables section. This will download the image, install a few extensions and attach the editor to the container.
 
