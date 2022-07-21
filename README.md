@@ -66,15 +66,55 @@ Note: You can either load your own *.tflite models into the Docker container usi
 
 ### Compiling your model for Bela
 
+To compile models using IREE, use the `iree-compile` tool, pre-installed in the container at /opt/iree-host-build/bin/iree-compile.
+
+Use the `--help` flag to see all the different compilation options available.
+
+#### Bela specific flags
+
+TODO: add explanation of important flags
+
+To compile a model from the TOSA dialect (such as models you have imported from TFLite), you can run the following command in the container, pointing to your *.mlir model.
+
+```
+/opt/iree-host-build/bin/iree-compile   --iree-input-type=tosa \
+                                        --iree-vmvx-enable-microkernels \
+                                        --iree-mlir-to-vm-bytecode-module \
+                                        --iree-hal-target-backends=dylib-llvm-aot \
+                                        --iree-llvm-target-triple=armv7a-pc-linux-eabi \
+                                        --iree-llvm-target-float-abi=hard \
+                                        --iree-llvm-debug-symbols=false \
+                                        --iree-vm-bytecode-module-strip-source-map=true \
+                                        --iree-vm-emit-polyglot-zip=false \
+                                        /path/to/your/model.mlir \
+                                        -o iree_output.vmfb
+```
 
 
 ## Performance analysis
+
+Now that you have an IREE module compiled, you can benchmark and profile it on Bela. 
 
 ### Benchmarking using iree-benchmark-module
 
 [IREE docs](https://github.com/iree-org/iree/blob/main/docs/developers/developing_iree/benchmarking.md)
 
-TBD
+TODO: replace with basic bash script
+
+To benchmark your IREE module on Bela, you first have to copy over the iree-benchmark-module binary to Bela.
+
+` scp /opt/iree-device-build/tools/iree-benchmark-module root@192.168.6.2: `
+
+Then copy over your *.vmfb file using the same method and SSH to your Bela.
+
+Run `iree-benchmark-module --help` to get a printout of all the required flags.
+
+Example benchmarking command:
+
+`./iree-benchmark-module --device=local-sync:// --module_file=filename.vmfb  --function_input=4xf32=1 2 3 4 --function_input=4xf32= 5 6 7 8 --entry_function=simple_mul `
+
+TODO: Note on how to find entry function name and input sizes.
+
 
 ### Profiling using Tracy
 [IREE docs](https://github.com/iree-org/iree/blob/main/docs/developers/developing_iree/profiling_with_tracy.md)
