@@ -3,6 +3,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 ADD cmake/ /home/cmake/
 ADD iree/ /home/iree/
+ADD models/ /home/models/
 
 ADD scripts/docker-build/build_packages.sh /home/scripts/docker-build/build_packages.sh
 RUN /home/scripts/docker-build/build_packages.sh

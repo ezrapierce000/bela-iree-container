@@ -32,6 +32,7 @@ apt-get install --no-install-recommends -y \
 	vim \
 	ccache \
 	python3 \
+	python3-pip \
 	lsb-release \
 	wget \
 	software-properties-common \
@@ -39,6 +40,9 @@ apt-get install --no-install-recommends -y \
 	libtbb-dev \
        	libzstd-dev \
 	pkg-config
+
+
+python3 -m pip install iree-tools-tflite tensorflow matplotlib
 
 bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
 rm -rf /var/lib/apt/lists/*

@@ -56,16 +56,13 @@ The following sections document a workflow for steps 1-3 for Bela. For running I
 
 You must first import your model into a [MLIR](https://mlir.llvm.org/) dialect which can then be compiled by IREE. This is well supported for TFLite and PyTorch importing is also being worked on with the [Torch-MLIR](https://github.com/llvm/torch-mlir) project.
 
-*TFLite*: IREE provides an importing tool for TFLite models `iree-import-tflite`. Installation (TODO: provide installation in Docker container):
-```
-python -m pip install iree-tools-tflite
-```
-
-This tool will import your TFLite model into the [TOSA dialect](https://mlir.llvm.org/docs/Dialects/TOSA/). You can find more in depth docs about using TFLite with IREE [here](https://iree-org.github.io/iree/getting-started/tflite/), but to get started importing a TFLite model to MLIR, run the following command:
+*TFLite*: IREE provides an importing tool for TFLite models `iree-import-tflite`. This tool will import your TFLite model into the [TOSA dialect](https://mlir.llvm.org/docs/Dialects/TOSA/). You can find more in depth docs about using TFLite with IREE [here](https://iree-org.github.io/iree/getting-started/tflite/), but to get started importing a TFLite model to MLIR, run the following command:
 
 ```
 iree-import-tflite /path/to/tflite/model.tflite -o /path/to/mlir/model/output.mlir
 ```
+
+Note: You can either load your own *.tflite models into the Docker container using [docker cp](https://docs.docker.com/engine/reference/commandline/cp/) or try building some of the models in /home/models/
 
 ### Compiling your model for Bela
 
