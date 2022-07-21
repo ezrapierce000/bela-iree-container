@@ -5,7 +5,7 @@ This project is based on a fork of the [xc-bela-container](https://github.com/ro
 By containerizing the cross-compilation toolchain, Bela code can be written and compiled on any host OS that can run Docker, and is compiled much faster and with more flexibility than in the Bela IDE. The VSCode environment is also set up for running GDB over SSH, allowing you to debug your Bela programs in the editor. This repo is set up to be used with VSCode.
 
 
-### Quickstart
+## Quickstart
 
 First you must clone this git repo, as shown below, and install [Docker](https://docs.docker.com/get-docker/).
 
@@ -15,7 +15,7 @@ git clone --recurse-submodules https://github.com/ezrapierce000/xc-bela-containe
 
 You can now either continue the setup using just the command line or using VSCode, both options are shown below.
 
-#### Command Line
+### Command Line
 
 First, pull the latest docker image:
 
@@ -32,14 +32,29 @@ docker run -it ezrapierce000/xc-bela-iree:latest
 Now, with Bela powered on, change directories, `cd /home/scripts` and run a test benchmark on Bela `./benchmark_test.sh`. This test uploads the iree-benchmark-module tool to the Bela and runs a benchmark on a single multiply between two 4xf32 values.
 
 
-#### VSCode
+### VSCode
 
 Install [Docker](https://docs.docker.com/get-docker/) and the [Remote Development](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) extensions, if you haven't already. Clone the repo to your machine:
 
 
 Open the repo folder in VSCode and run the command `Remote-Containers: Reopen in Container`  or click the popup when prompted, ensure that the environment variables are set accordingly based on the Environment Variables section. This will download the image, install a few extensions and attach the editor to the container.
 
-Once the Docker container has been opened, move to /home/scripts, ensure your Bela is connected and execute the benchmark-test.sh script. This will copy over the iree-benchmark-module tool to your Bela along with a compiled test IREE .vmfb file and run a benchmark. The output should be similar to this IMAGE HERE.
+Once the Docker container has been opened, move to /home/scripts, ensure your Bela is connected and execute the benchmark-test.sh script. This will copy over the iree-benchmark-module tool and runs a benchmark on a single multiply between two 4xf32 values.
+
+## Importing and Compiling models using IREE
+
+As outlined in the IREE [docs](https://iree-org.github.io/iree/#workflow-overview), the general workflow for IREE is as follows:
+
+1. Import your model
+2. Select your deployment configuration (Target platform, constraints)
+3. Compile your model
+4. Run your model
+
+The following sections document a workflow for steps 1-3 for Bela.
+
+### Importing your model
+
+*TFLite*: IREE provides an importing tool for TFLite models `iree-import-tflite`
 
 ## Performance analysis
 
