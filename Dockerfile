@@ -15,8 +15,8 @@ ADD scripts/docker-build/build_env.sh /home/scripts/docker-build/build_env.sh
 RUN /home/scripts/docker-build/build_env.sh
 
 ADD scripts/docker-build/build_iree.sh /home/scripts/docker-build/build_iree.sh
-RUN /home/scripts/docker-build/build_iree.shA
+RUN /home/scripts/docker-build/build_iree.sh
 
-ADD scripts/benchmark_test.sh
+ADD scripts/benchmark_test.sh /home/scripts/benchmark_test.sh
 
 CMD /bin/bash

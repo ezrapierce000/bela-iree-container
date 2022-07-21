@@ -1,4 +1,5 @@
 #!/bin/bash
+source /home/scripts/docker-build/build_settings
 
 scp /opt/iree-device-build/tools/iree-benchmark-module root@$BBB_HOSTNAME:/tmp/
 scp /opt/iree-device-build/samples/simple_embedding/simple_embedding_test_bytecode_module_dylib_arm_32.vmfb root@$BBB_HOSTNAME:/tmp/
