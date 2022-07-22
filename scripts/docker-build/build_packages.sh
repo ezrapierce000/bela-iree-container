@@ -43,6 +43,7 @@ apt-get install --no-install-recommends -y \
 
 
 python3 -m pip install iree-tools-tflite tensorflow matplotlib
+pip install --pre torch-mlir torchvision -f https://github.com/llvm/torch-mlir/releases --extra-index-url https://download.pytorch.org/whl/nightly/cpu
 
 bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
 rm -rf /var/lib/apt/lists/*
