@@ -65,6 +65,8 @@ iree-import-tflite /path/to/tflite/model.tflite -o /path/to/mlir/model/output.ml
 
 Note: You can either load your own *.tflite models into the Docker container using [docker cp](https://docs.docker.com/engine/reference/commandline/cp/) or try building some of the models in /home/models/
 
+*PyTorch*: PyTorch models can also be imported into the TOSA MLIR format using the [Torch-MLIR](https://github.com/llvm/torch-mlir) project.
+
 ### Compiling your model for Bela
 
 To compile models using IREE, use the `iree-compile` tool, pre-installed in the container at /opt/iree-host-build/bin/iree-compile.
