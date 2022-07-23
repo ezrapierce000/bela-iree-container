@@ -1,4 +1,4 @@
-# WIP:bela-iree-benchmark-container
+# WIP: Bela IREE Docker container
 
 This project is based on a fork of the [xc-bela-container](https://github.com/rodrigodzf/xc-bela-container) project with added support for IREE projects on Bela. The image comes with IREE host binaries pre-installed, some IREE tools cross-compiled for Bela, a CMake toolchain for building IREE runtime components as well as instructions for benchmarking and profiling IREE programs. Please see the [IREE project](https://iree-org.github.io/iree/) for more details on IREE.
 
