@@ -5,3 +5,6 @@
 [submodule "iree"]
 	path = iree
 	url = https://github.com/iree-org/iree.git
+[submodule "models/embedded-model-zoo"]
+	path = models/embedded-model-zoo
+	url = git@github.com:victor-shepardson/embedded-model-zoo.git
