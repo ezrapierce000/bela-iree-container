@@ -11,7 +11,6 @@
 	},
 	"runArgs": [
 		"--env-file", ".devcontainer/devcontainer.env",
-		"--network", "host",
 		"--cap-add=SYS_PTRACE",
 		"--security-opt", "seccomp=unconfined",
 	],
@@ -21,10 +20,6 @@
 		"source=xc-bela-bashhistory,target=/commandhistory,type=volume"
 	],
 	"extensions": [
-		"llvm-vs-code-extensions.vscode-clangd",
-		"webfreak.debug",
-		"twxs.cmake",
-		"ms-vscode.cmake-tools",
-		"ms-vscode.cpptools"
+
 	]
 }
