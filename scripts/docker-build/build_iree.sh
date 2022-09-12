@@ -1,11 +1,11 @@
 #!/bin/bash
 
 mkdir /opt/iree-host-build && cd /opt/iree-host-build
+RELEASE=2022912.264
+wget https://github.com/iree-org/iree/releases/download/candidate-$RELEASE/iree-dist-$RELEASE-linux-x86_64.tar.xz
 
-wget https://github.com/iree-org/iree/releases/download/candidate-20220821.242/iree-dist-20220821.242-linux-x86_64.tar.xz
-
-tar xvf iree-dist-20220821.242-linux-x86_64.tar.xz
-rm iree-dist-20220821.242-linux-x86_64.tar.xz
+tar xvf iree-dist-$RELEASE-linux-x86_64.tar.xz
+rm iree-dist-$RELEASE-linux-x86_64.tar.xz
 
 cd /home/iree/
 

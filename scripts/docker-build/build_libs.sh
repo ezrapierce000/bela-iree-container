@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-source build_settings
+source /home/scripts/docker-build/build_settings
 BBB_ADDRESS=root@$BBB_HOSTNAME
 
 # set date and build libraries
