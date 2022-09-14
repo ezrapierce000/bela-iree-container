@@ -1,0 +1,43 @@
+#!/bin/bash
+
+
+if [ ! -f ${2} ]; then
+	echo "file does not exist."
+	exit
+fi
+
+INPUT_FILE=${2}
+
+MODEL_NAME=$(echo $INPUT_FILE | cut -d. -f1)
+FILE_EXT=$(echo $INPUT_FILE | cut -d. -f2)
+
+if [[ $FILE_EXT == "tflite" ]]; then
+	iree-import-tflite ${2} -o $MODEL_NAME.mlir
+	INPUT_FILE="$MODEL_NAME.mlir"
+elif [ ! $FILE_EXT == "mlir"]; then
+	echo "only supports .mlir and .tflite"
+	exit
+fi
+
+
+OPTIONS="--iree-input-type=tosa  --iree-mlir-to-vm-bytecode-module --iree-vm-emit-polyglot-zip=false"
+OPTIMIZATIONS="--iree-opt-const-eval --iree-vmvx-enable-microkernels --iree-opt-const-expr-hoisting --iree-opt-numeric-precision-reduction --iree-vm-bytecode-module-optimize"
+
+if [ ${1} == "bbb" ]; then
+	echo "bela!"
+	HW_OPTIONS="--iree-hal-target-backends=llvm-cpu --iree-llvm-target-triple=armv7a-pc-linux-eabi --iree-llvm-target-float-abi=hard"
+	MORE="--iree-llvm-target-cpu-features=armv7-a"
+elif [ ${1} == "bbai64" ]; then
+	echo "bbai64"
+	HW_OPTIONS="--iree-hal-target-backends=llvm-cpu --iree-llvm-target-triple=aarch64-pc-linux-eabi"
+elif [ ${1} == "x86" ]; then
+	echo "host!"
+	HW_OPTIONS="--iree-hal-target-backends=llvm-cpu" 
+else
+	echo "platform not supported"
+fi
+
+
+	/opt/iree-host-build/bin/iree-compile $OPTIONS $OPTIMIZATIONS $HW_OPTIONS $INPUT_FILE -o ${3}
+
+echo $CMD

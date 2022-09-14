@@ -2,9 +2,6 @@ FROM --platform=linux/amd64 debian:bullseye
 ENV DEBIAN_FRONTEND noninteractive
 
 ADD cmake /home/cmake
-ADD iree /home/iree
-ADD bela-iree-runtime /home/bela-iree-runtime
-ADD models /home/models
 ADD scripts /home/scripts
 
 RUN /home/scripts/docker-build/build_packages.sh

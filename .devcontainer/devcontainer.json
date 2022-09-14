@@ -3,8 +3,7 @@
 {
 	"name": "xc-bela-with-iree",
 	"context": ".",
-	"image": "ezrapierce000/xc-bela-iree:latest",
-	"workspaceFolder": "/workspace",
+	"image": "ezrapierce000/xc-bela-iree:new",
 	"settings": {
 		"terminal.integrated.shell.linux": "/bin/bash",
 		"remote.containers.workspaceMountConsistency": "cached"
@@ -14,12 +13,10 @@
 		"--cap-add=SYS_PTRACE",
 		"--security-opt", "seccomp=unconfined",
 	],
-	"workspaceMount": "source=xc-bela-src,target=/workspace,type=volume",
 	"mounts": [
 		"source=xc-bela-extensions,target=/root/.vscode-server/extensions,type=volume",
 		"source=xc-bela-bashhistory,target=/commandhistory,type=volume"
 	],
 	"extensions": [
-
 	]
 }

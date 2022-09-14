@@ -1,0 +1,29 @@
+#!/bin/bash
+
+
+# check for benchmark bin, copy into /opt if not
+
+if [ ${2} == "bbb" ]; then
+	BBB_HOSTNAME=root@192.168.6.2
+	BENCH_CMD="./iree-benchmark-module --module_file=/tmp/${1} --device=local-sync:// --function_input=1x${3}xf32=0 --entry_function=main --benchmark_repetitions=10"
+elif [ ${2} == "bbai64" ]; then
+	BBB_HOSTNAME=debian@192.168.7.2
+	BENCH_CMD="./iree-benchmark-module --module_file=/tmp/${1} --device=local-sync:// --function_input=1x${3}xf32=0 --entry_function=main --benchmark_repetitions=10"
+else
+	exit
+fi
+
+FILENAME=$PWD/$1
+
+
+scp $FILENAME $BBB_HOSTNAME:/tmp/
+SETUP_CMD="cd /tmp"
+# should zip up artifacts
+CLEANUP_CMD="cd /tmp && rm ${1}"
+PERF_CMD="perf_5.10 record -F 99 -o perf.data"
+ssh $BBB_HOSTNAME $BENCH_CMD
+
+# scp $BBB_HOSTNAME:/root/perf.data ./profiles/${1}/perf.data
+
+ssh $BBB_HOSTNAME $CLEANUP_CMD
+exit
