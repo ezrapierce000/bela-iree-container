@@ -1,7 +1,9 @@
 #!/bin/bash
 
-
-# check for benchmark bin, copy into /opt if not
+if [ "$#" -ne 3 ]; then
+	echo "usage: benchmark filename target-name(bbb|bbai64) input-size"
+	exit
+fi
 
 if [ ${2} == "bbb" ]; then
 	BBB_HOSTNAME=root@192.168.6.2
@@ -19,11 +21,27 @@ FILENAME=$PWD/$1
 scp $FILENAME $BBB_HOSTNAME:/tmp/
 SETUP_CMD="cd /tmp"
 # should zip up artifacts
-CLEANUP_CMD="cd /tmp && rm ${1}"
-PERF_CMD="perf_5.10 record -F 99 -o perf.data"
-ssh $BBB_HOSTNAME $BENCH_CMD
+CLEANUP_CMD="cd /tmp && rm ${1} && rm /root/perf.data"
 
-# scp $BBB_HOSTNAME:/root/perf.data ./profiles/${1}/perf.data
+PROFILER_CMD="IREE_PRESERVE_DYLIB_TEMP_FILES=1 perf_5.10 record -F 99 -e cache-misses -o perf.data"
+# PROFILER_CMD="TRACY_NO_EXIT=1 IREE_PRESERVE_DYLIB_TEMP_FILES=1 "
+MODEL_NAME=$(echo ${1} | cut -d. -f1)
+mkdir /tmp/profiles/$MODEL_NAME
+PROFILE_DIR=/tmp/profiles/$MODEL_NAME
+
+# TRACY=sleep 5 && /opt/tracy-build/tracy/iree-tracy-capture -a 192.168.6.2 -o $PROFILE_DIR/tracy.output
+
+ssh $BBB_HOSTNAME $PROFILER_CMD $BENCH_CMD "&& cp /proc/kallsyms /tmp/kallsyms" 
+
+
+
+scp $BBB_HOSTNAME:/root/perf.data $PROFILE_DIR/perf.data
+scp $BBB_HOSTNAME:/tmp/kallsyms $PROFILE_DIR/kallsyms
 
 ssh $BBB_HOSTNAME $CLEANUP_CMD
+
+# generate flamegraph
+
+#perf_5.10 script -i $PROFILE_DIR/perf.data --kallsyms=$PROFILE_DIR/kallsyms --symfs=/opt/iree-device-build/tools | /home/FlameGraph/stackcollapse-perf.pl > $PROFILE_DIR/out.perf-folded
+#/home/FlameGraph/flamegraph.pl $PROFILE_DIR/out.perf-folded > $PROFILE_DIR/siren_mlp.svg
 exit

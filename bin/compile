@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ "$#" -ne 3 ]; then
+	echo "usage: compile target-name(bbb|bbai64) input-file output-file"
+	exit
+fi
+
 
 if [ ! -f ${2} ]; then
 	echo "file does not exist."
