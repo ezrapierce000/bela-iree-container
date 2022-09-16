@@ -6,9 +6,9 @@ ADD scripts /home/scripts
 
 RUN /home/scripts/docker-build/build_packages.sh
 
-RUN /home/scripts/docker-build/build_bela.sh
-
 RUN /home/scripts/docker-build/build_libs.sh
+
+RUN /home/scripts/docker-build/build_bela.sh
 
 RUN /home/scripts/docker-build/conda_install.sh
 
