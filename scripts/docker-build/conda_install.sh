@@ -13,6 +13,9 @@ yes | CONDA_SUBDIR=linux-64 conda create -n zoo -c conda-forge python pip fire j
 conda activate zoo
 conda config --env --set subdir linux-64
 
+python -m pip install https://github.com/llvm/torch-mlir/releases/download/snapshot-20220916.598/torch-1.13.0.dev20220916+cpu-cp310-cp310-linux_x86_64.whl
+python -m pip install https://github.com/llvm/torch-mlir/releases/download/snapshot-20220916.598/torch_mlir-20220916.598-cp310-cp310-linux_x86_64.whl
+
 cd /opt
 git clone https://github.com/iree-org/iree-jax.git && cd iree-jax
 python -m pip install -e .[test,xla,cpu] -f https://github.com/google/iree/releases
