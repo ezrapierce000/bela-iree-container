@@ -6,9 +6,11 @@ chmod +x ./Miniconda3-py39_4.12.0-Linux-x86_64.sh
 
 source /root/miniconda3/bin/activate
 
-yes | CONDA_SUBDIR=linux-64 conda create -n zoo-tf -c conda-forge python pip fire tensorflow
+yes | CONDA_SUBDIR=linux-64 conda create -n zoo-tf -c conda-forge python pip fire
 conda activate zoo-tf
 conda config --env --set subdir linux-64
+pip install tensorflow==2.10 tensorflow-probability onnx-tf
+
 yes | CONDA_SUBDIR=linux-64 conda create -n zoo -c conda-forge python pip fire jax
 conda activate zoo
 conda config --env --set subdir linux-64
@@ -19,5 +21,4 @@ python -m pip install https://github.com/llvm/torch-mlir/releases/download/snaps
 cd /opt
 git clone https://github.com/iree-org/iree-jax.git && cd iree-jax
 python -m pip install -e .[test,xla,cpu] -f https://github.com/google/iree/releases
-# python setup.py install
 
