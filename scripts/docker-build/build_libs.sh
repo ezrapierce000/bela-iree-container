@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
-source /home/scripts/docker-build/build_settings
-BBB_ADDRESS=root@$BBB_HOSTNAME
+BBB_ADDRESS=root@192.168.6.2
 
 # set date and build libraries
 ssh-keygen -R $1 &> /dev/null || true
