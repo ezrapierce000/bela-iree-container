@@ -3,7 +3,7 @@ source /home/scripts/docker-build/build_settings
 BBB_ADDRESS=root@$BBB_HOSTNAME
 
 # pre-register ssh key
-mkdir ~/.ssh
+mkdir -p ~/.ssh
 ssh-keyscan $BBB_HOSTNAME >> ~/.ssh/known_hosts
 
 # system
