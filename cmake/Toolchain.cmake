@@ -12,7 +12,6 @@ set(CMAKE_CXX_COMPILER_TARGET ${triple})
 set(CMAKE_C_COMPILER_EXTERNAL_TOOLCHAIN /usr/lib/llvm-15)
 set(CMAKE_CXX_COMPILER_EXTERNAL_TOOLCHAIN /usr/lib/llvm-15)
 add_link_options(-lstdc++ -pthread -lm -ldl -lrt) 
-# Why doesnt -lpthread work???? ^^^
 add_compile_definitions(_GNU_SOURCE)
 
 

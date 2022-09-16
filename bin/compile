@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ "$#" -ne 3 ]; then
-	echo "usage: compile target-name(bbb|bbai64)  input-file output-file"
+if [ "$#" -ne 4 ]; then
+	echo "usage: compile target-name(bbb|bbai64) input-type(mhlo|tosa|tflite) input-file output-file"
 	exit
 fi
 
@@ -23,6 +23,7 @@ if [[ ${2} == "tflite" ]]; then
 	INPUT_TYPE="tosa"
 else
 	INPUT_TYPE=${2}
+fi
 
 
 OPTIONS="--iree-input-type=$INPUT_TYPE  --iree-mlir-to-vm-bytecode-module --iree-vm-emit-polyglot-zip=false"
@@ -44,6 +45,6 @@ else
 fi
 
 
-	/opt/iree-host-build/bin/iree-compile $OPTIONS $OPTIMIZATIONS $HW_OPTIONS $INPUT_FILE -o ${3}
+	/opt/iree-host-build/bin/iree-compile $OPTIONS $OPTIMIZATIONS $HW_OPTIONS $INPUT_FILE -o ${4}
 
 echo $CMD
