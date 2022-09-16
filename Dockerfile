@@ -10,10 +10,10 @@ RUN /home/scripts/docker-build/build_bela.sh
 
 RUN /home/scripts/docker-build/build_libs.sh
 
+RUN /home/scripts/docker-build/conda_install.sh
+
 RUN /home/scripts/docker-build/build_env.sh
 
 RUN /home/scripts/docker-build/build_iree.sh
-
-RUN /home/scripts/docker-build/conda_install.sh
 
 CMD /bin/bash
