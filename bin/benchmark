@@ -5,21 +5,23 @@ if [ "$#" -ne 3 ]; then
 	exit
 fi
 
+FILENAME=$(basename ${1})
+
+
 if [ ${2} == "bbb" ]; then
 	BBB_HOSTNAME=root@192.168.6.2
-	BENCH_CMD="./iree-benchmark-module --module_file=/tmp/${1} --device=local-sync:// --function_input=1x${3}xf32=0 --entry_function=run --benchmark_repetitions=10"
+	BENCH_CMD="./iree-benchmark-module --module_file=/tmp/$FILENAME --device=local-sync:// --function_input=1x${3}xf32=0 --entry_function=forward --benchmark_repetitions=10"
 elif [ ${2} == "bbai64" ]; then
 	BBB_HOSTNAME=debian@192.168.7.2
-	BENCH_CMD="./iree-benchmark-module --module_file=/tmp/${1} --device=local-sync:// --function_input=1x${3}xf32=0 --entry_function=main --benchmark_repetitions=10"
+	BENCH_CMD="./iree-benchmark-module --module_file=/tmp/$FILENAME --device=local-sync:// --function_input=1x${3}xf32=0 --entry_function=main --benchmark_repetitions=10"
 else
 	exit
 fi
 
-FILENAME=$PWD/$1
 
-
-scp $FILENAME $BBB_HOSTNAME:/tmp/
+scp $1 $BBB_HOSTNAME:/tmp/$FILENAME
 SETUP_CMD="cd /tmp"
+
 # should zip up artifacts
 CLEANUP_CMD="cd /tmp && rm ${1} && rm /root/perf.data"
 
