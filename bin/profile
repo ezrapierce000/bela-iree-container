@@ -1,0 +1,18 @@
+
+
+PROFILER_CMD="IREE_PRESERVE_DYLIB_TEMP_FILES=1 perf_5.10 record -F 999 -o perf.data"
+# PROFILER_CMD="TRACY_NO_EXIT=1 IREE_PRESERVE_DYLIB_TEMP_FILES=1 "
+
+mkdir -p /tmp/profiles/$MODEL_NAME
+PROFILE_DIR=/tmp/profiles/$MODEL_NAME
+
+
+scp $BBB_HOSTNAME:/root/perf.data $PROFILE_DIR/perf.data
+scp $BBB_HOSTNAME:/tmp/kallsyms $PROFILE_DIR/kallsyms
+
+# TRACY=sleep 5 && /opt/tracy-build/tracy/iree-tracy-capture -a 192.168.6.2 -o $PROFILE_DIR/tracy.output
+
+# generate flamegraph
+
+#perf_5.10 script -i $PROFILE_DIR/perf.data --kallsyms=$PROFILE_DIR/kallsyms --symfs=/opt/iree-device-build/tools | /home/FlameGraph/stackcollapse-perf.pl > $PROFILE_DIR/out.perf-folded
+#/home/FlameGraph/flamegraph.pl $PROFILE_DIR/out.perf-folded > $PROFILE_DIR/siren_mlp.svg
