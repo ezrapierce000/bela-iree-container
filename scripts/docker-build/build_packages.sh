@@ -24,6 +24,7 @@ apt-get install --no-install-recommends -y \
 	gcc-arm-linux-gnueabihf \
 	g++-arm-linux-gnueabihf \
 	binutils-arm-linux-gnueabihf \
+	debootstrap \
 	build-essential \
 	rsync \
 	ssh \
@@ -36,9 +37,19 @@ apt-get install --no-install-recommends -y \
 	software-properties-common \
 	libcapstone-dev \
 	libtbb-dev \
-       	libzstd-dev \
+	libzstd-dev \
 	pkg-config \
-	linux-perf 
+	linux-perf \
+	kmod \
+	lzop \
+	cpio \
+	bc \
+	fakeroot \
+	man-db \
+	gettext \
+	libmpc-dev \
+	u-boot-tools \
+	libssl-dev:amd64
 
 bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
 rm -rf /var/lib/apt/lists/*
