@@ -1,18 +1,30 @@
+#!/bin/bash
 
+if [ "$#" -ne 3 ]; then
+	echo "usage: profile filename target-name(bbb|bbai64) input-size"
+	exit
+fi
 
+BBB_HOSTNAME=root@192.168.2.31
 PROFILER_CMD="IREE_PRESERVE_DYLIB_TEMP_FILES=1 perf_5.10 record -F 999 -o perf.data"
-# PROFILER_CMD="TRACY_NO_EXIT=1 IREE_PRESERVE_DYLIB_TEMP_FILES=1 "
+FILENAME=$(basename ${1})
+echo $FILENAME
+
+scp $1 $BBB_HOSTNAME:/tmp/$FILENAME
+BENCH_CMD="./iree-run-module --module_file=/tmp/$FILENAME --device=local-sync:// --function_input=1x${3}xf32=0 --entry_function=run"
+
+
+
+SETUP_CMD="cd /tmp"
+CLEANUP_CMD="cd /tmp && rm /tmp/$FILENAME && rm /root/perf.data"
+
+ssh $BBB_HOSTNAME $PROFILER_CMD $BENCH_CMD
 
 mkdir -p /tmp/profiles/$MODEL_NAME
 PROFILE_DIR=/tmp/profiles/$MODEL_NAME
 
-
 scp $BBB_HOSTNAME:/root/perf.data $PROFILE_DIR/perf.data
 scp $BBB_HOSTNAME:/tmp/kallsyms $PROFILE_DIR/kallsyms
+ssh $BBB_HOSTNAME $CLEANUP_CMD
 
-# TRACY=sleep 5 && /opt/tracy-build/tracy/iree-tracy-capture -a 192.168.6.2 -o $PROFILE_DIR/tracy.output
-
-# generate flamegraph
-
-#perf_5.10 script -i $PROFILE_DIR/perf.data --kallsyms=$PROFILE_DIR/kallsyms --symfs=/opt/iree-device-build/tools | /home/FlameGraph/stackcollapse-perf.pl > $PROFILE_DIR/out.perf-folded
-#/home/FlameGraph/flamegraph.pl $PROFILE_DIR/out.perf-folded > $PROFILE_DIR/siren_mlp.svg
+exit
