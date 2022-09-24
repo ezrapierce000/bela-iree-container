@@ -1,28 +1,63 @@
 #!/bin/bash
 
-if [ "$#" -ne 3 ]; then
-	echo "usage: benchmark filename target-name(bbb|bbai64) input-size"
-	exit
+usage() { echo "Usage: $0 
+-f filename 
+-t targetname 
+-r repetitions 
+-e entry-function 
+-i inputs(ex: 1x4xf32=[0 4 1 3],1x4xf32=[5 2 0 0]) 
+-d device-ip(default: 192.168.7.2)" 1>&2; exit 1; }
+
+while getopts ":f:t:r:e:i:d:" opt; do
+    case "${opt}" in
+        f)
+            filename=${OPTARG}
+            ;;
+        t)
+            target=${OPTARG}
+            ;;
+		r)
+			repetitions=${OPTARG}
+			;;
+		e)
+			function=${OPTARG}
+			;;
+		i)
+			inputs=${OPTARG}
+			;;
+		d)
+			device_ip=${OPTARG}
+			;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+# device_ip=192.168.2.49
+
+if [ -z "{$filename}" ] || [ -z "{$target}" ] || [ -z "{$repetitions}" ] || [ -z "{$function}" ] || [ -z "{$inputs}" ]; then
+	usage
 fi
 
-FILENAME=$(basename ${1})
 
-if [ ${2} == "bbb" ]; then
-	BBB_HOSTNAME=root@192.168.7.2
-	BENCH_CMD="./iree-benchmark-module --module_file=/tmp/$FILENAME --device=local-sync:// --function_input=1x${3}xf32=0 --entry_function=forward --benchmark_repetitions=10"
-elif [ ${2} == "bbai64" ]; then
-	BBB_HOSTNAME=debian@192.168.7.2
-	BENCH_CMD="./iree-benchmark-module --module_file=/tmp/$FILENAME --device=local-sync:// --function_input=1x${3}xf32=0 --entry_function=main --benchmark_repetitions=10"
-else
-	exit
-fi
+echo "filename: $device_ip"
+# check for benchmark utility on board first
 
-scp $1 $BBB_HOSTNAME:/tmp/$FILENAME
+# split inputs into list if needed
+
+name=$(basename $filename)
+
+BENCH_CMD="/opt/iree-benchmark-module --module_file=/tmp/$name --device=local-sync:// --function_input=$inputs --entry_function=$function --benchmark_repetitions=$repetitions"
+
+
+echo "ip: $device_ip"
+
+scp $filename root@$device_ip:/tmp/
+
 SETUP_CMD="cd /tmp"
+CLEANUP_CMD="cd /tmp && rm /tmp/$name"
 
-CLEANUP_CMD="cd /tmp && rm /tmp/$FILENAME"
-
-ssh $BBB_HOSTNAME $BENCH_CMD
-# ssh $BBB_HOSTNAME $CLEANUP_CMD
+ssh $device_ip "$SETUP_CMD && $BENCH_CMD && $CLEANUP_CMD"
 
 exit
