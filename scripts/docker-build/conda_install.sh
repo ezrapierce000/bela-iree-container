@@ -15,6 +15,8 @@ yes | CONDA_SUBDIR=linux-64 conda create -n zoo -c conda-forge python pip fire j
 conda activate zoo
 conda config --env --set subdir linux-64
 
+pip install iree-compiler iree-tools-tf iree-tools-tflite
+
 python -m pip install https://github.com/llvm/torch-mlir/releases/download/snapshot-20220916.598/torch-1.13.0.dev20220916+cpu-cp310-cp310-linux_x86_64.whl
 python -m pip install https://github.com/llvm/torch-mlir/releases/download/snapshot-20220916.598/torch_mlir-20220916.598-cp310-cp310-linux_x86_64.whl
 
