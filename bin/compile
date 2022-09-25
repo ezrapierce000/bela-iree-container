@@ -1,50 +1,81 @@
 #!/bin/bash
 
-if [ "$#" -ne 4 ]; then
-	echo "usage: compile target-name(bbb|bbai64) input-type(mhlo|tosa|tflite) input-file output-file"
+
+usage() { echo "Usage: $0 
+-i input-filename 
+-t target<bbb|bbai64|x86>
+-d input-dialect<mhlo|tosa|tflite>
+-f format<vm-bytecode|vm-c|vm-asm>
+-v verbose
+-o output-filename
+" 1>&2; exit 1; }
+
+while getopts ":i:t:d:f:v:o:" opt; do
+    case "${opt}" in
+        i)
+            filename=${OPTARG}
+            ;;
+        t)
+            target=${OPTARG}
+            ;;
+		d)
+			input_type=${OPTARG}
+			;;
+		f)
+			format=${OPTARG}
+			;;
+		v)
+			mlir_output=1
+			;;
+		o)
+			output_file=${OPTARG}
+			;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+
+if [ ! -f $filename ]; then
+	echo "input file does not exist."
 	exit
 fi
 
-
-if [ ! -f ${3} ]; then
-	echo "file does not exist."
-	exit
+if [ -z $filename ] || [ -z $target ] || [ -z $input_type ] || [ -z $format ] || [ -z $output_file ]; then
+	usage
 fi
 
+model_name=$(echo $filename | cut -d. -f1)
 
-
-INPUT_FILE=${3}
-
-MODEL_NAME=$(echo $INPUT_FILE | cut -d. -f1)
-
-if [[ ${2} == "tflite" ]]; then
-	iree-import-tflite ${3} -o $MODEL_NAME.mlir
-	INPUT_FILE="$MODEL_NAME.mlir"
-	INPUT_TYPE="tosa"
+if [[ $input_type == "tflite" ]]; then
+	iree-import-tflite $filename -o $model_name.mlir
+	input_file="$model_name.mlir"
+	input_dialect="tosa"
 else
-	INPUT_TYPE=${2}
+	input_dialect=$input_type
+	input_file=$filename
 fi
 
 
-OPTIONS="--iree-input-type=$INPUT_TYPE  --iree-mlir-to-vm-bytecode-module --iree-vm-emit-polyglot-zip=false"
-OPTIMIZATIONS="--iree-opt-const-eval --iree-vmvx-enable-microkernels --iree-opt-const-expr-hoisting --iree-opt-numeric-precision-reduction --iree-vm-bytecode-module-optimize"
+OPTIONS="--iree-input-type=$input_dialect --output-format=$format --compile-mode=std "
+OPTIMIZATIONS="--iree-opt-const-eval --iree-stream-partitioning-favor=min-peak-memory --iree-vmvx-enable-microkernels --iree-opt-const-expr-hoisting --iree-opt-numeric-precision-reduction"
 
 
-if [ ${1} == "bbb" ]; then
-	echo "bela!"
-	HW_OPTIONS="--iree-hal-target-backends=llvm-cpu --iree-llvm-target-triple=armv7a-pc-linux-eabi --iree-llvm-target-float-abi=hard"
-	MORE="--iree-llvm-target-cpu-features=armv7-a"
-elif [ ${1} == "bbai64" ]; then
-	echo "bbai64"
-	HW_OPTIONS="--iree-hal-target-backends=llvm-cpu --iree-llvm-target-triple=aarch64-pc-linux-eabi"
-elif [ ${1} == "x86" ]; then
-	echo "host!"
-	HW_OPTIONS="--iree-hal-target-backends=llvm-cpu" 
+if [ $target == "bbb" ]; then
+	HW_OPTIONS="--iree-hal-target-backends=vmvx --iree-llvm-target-triple=armv7a-linux-eabi --iree-llvm-target-float-abi=hard --arm-implicit-it=never"
+	MORE="--iree-llvm-target-cpu-features=armv7-a --iree-hal-dump-executable-benchmarks-to=siren-hal-bench.mlir --iree-flow-export-benchmark-funcs"
+elif [ $target == "bbai64" ]; then
+	HW_OPTIONS="--iree-hal-target-backends=vmvx --iree-llvm-target-triple=aarch64-pc-linux-eabi"
+elif [ $target == "x86" ]; then
+	HW_OPTIONS="--iree-hal-target-backends=vmvx --iree-llvm-target-triple=host" 
 else
 	echo "platform not supported"
 fi
 
 
-	/opt/iree-host-build/bin/iree-compile $OPTIONS $OPTIMIZATIONS $HW_OPTIONS $INPUT_FILE -o ${4}
+	/opt/iree-host-build/bin/iree-compile $OPTIONS $OPTIMIZATIONS $HW_OPTIONS $input_file -o $output_file
 
-echo $CMD
+echo "compiled to $output_file"
+
+exit 1

@@ -21,6 +21,7 @@ while getopts ":f:t:r:e:i:d:" opt; do
 			;;
 		e)
 			function=${OPTARG}
+			echo $function
 			;;
 		i)
 			inputs=${OPTARG}
@@ -36,19 +37,32 @@ done
 
 # device_ip=192.168.2.49
 
-if [ -z "{$filename}" ] || [ -z "{$target}" ] || [ -z "{$repetitions}" ] || [ -z "{$function}" ] || [ -z "{$inputs}" ]; then
+if [ -z $filename ] || [ -z $target ] || [ -z $repetitions ] || [ -z $function ] || [ -z $inputs ]; then
 	usage
 fi
 
+if [ ! -f $filename ]; then
+	echo "input file does not exist."
+	exit
+fi
 
-echo "filename: $device_ip"
 # check for benchmark utility on board first
+if ! ssh root@$device_ip "test -e /opt/iree-benchmark-module" ; then
+	echo "Bela does not have iree benchmark utility installed, attempting to copy over..."
+	scp /opt/iree-device-build/tools/iree-benchmark-module root@$device_ip:/opt/iree-benchmark-module
+fi
 
-# split inputs into list if needed
 
 name=$(basename $filename)
 
-BENCH_CMD="/opt/iree-benchmark-module --module_file=/tmp/$name --device=local-sync:// --function_input=$inputs --entry_function=$function --benchmark_repetitions=$repetitions"
+function_inputs=""
+for i in ${inputs//,/ }
+do
+    function_inputs="$function_inputs --function_input=$i"
+done
+
+
+BENCH_CMD="/opt/iree-benchmark-module --module_file=/tmp/$name --device=local-sync:// $function_inputs --entry_function=$function --benchmark_repetitions=$repetitions"
 
 
 echo "ip: $device_ip"
@@ -60,4 +74,5 @@ CLEANUP_CMD="cd /tmp && rm /tmp/$name"
 
 ssh $device_ip "$SETUP_CMD && $BENCH_CMD && $CLEANUP_CMD"
 
+echo $BENCH_CMD
 exit
