@@ -47,9 +47,17 @@ if [ ! -f $filename ]; then
 fi
 
 # check for benchmark utility on board first
-if ! ssh root@$device_ip "test -e /opt/iree-benchmark-module" ; then
-	echo "Bela does not have iree benchmark utility installed, attempting to copy over..."
-	scp /opt/iree-device-build/tools/iree-benchmark-module root@$device_ip:/opt/iree-benchmark-module
+
+if [ $target == "bbb"]; then
+	if ! ssh root@$device_ip "test -e /opt/iree-benchmark-module" ; then
+		echo "Bela does not have iree benchmark utility installed, attempting to copy over..."
+		scp /opt/iree-device-build/tools/iree-benchmark-module root@$device_ip:/opt/iree-benchmark-module
+	fi
+elif [ $target == "bbai64" ]; then
+	if ! sshpass -p 'temppwd' ssh debian@$device_ip "test -e /opt/iree-benchmark-module" ; then
+		echo "BBAI64 does not have iree benchmark utility installed, attempting to copy over..."
+		sshpass -p 'temppwd' scp /opt/iree-ai-build/tools/iree-benchmark-module debian@$device_ip:/home/debian/iree-benchmark-module
+	fi
 fi
 
 
@@ -62,17 +70,19 @@ do
 done
 
 
-BENCH_CMD="/opt/iree-benchmark-module --module_file=/tmp/$name --device=local-sync:// $function_inputs --entry_function=$function --benchmark_repetitions=$repetitions"
 
-
-echo "ip: $device_ip"
-
-scp $filename root@$device_ip:/tmp/
 
 SETUP_CMD="cd /tmp"
 CLEANUP_CMD="cd /tmp && rm /tmp/$name"
-
-ssh $device_ip "$SETUP_CMD && $BENCH_CMD && $CLEANUP_CMD"
+if [ $target == "bbb" ]; then
+	BENCH_CMD="/opt/iree-benchmark-module --module_file=/tmp/$name --device=local-sync:// $function_inputs --entry_function=$function --benchmark_repetitions=$repetitions"
+	scp $filename root@$device_ip:/tmp/
+	ssh $device_ip "$SETUP_CMD && $BENCH_CMD && $CLEANUP_CMD"
+elif [ $target == "bbai64" ]; then
+	BENCH_CMD="/home/debian/iree-benchmark-module --module_file=/tmp/$name --device=local-sync:// $function_inputs --entry_function=$function --benchmark_repetitions=$repetitions"
+	sshpass -p 'temppwd' scp $filename debian@$device_ip:/tmp/
+	sshpass -p 'temppwd' ssh debian@$device_ip "$SETUP_CMD && $BENCH_CMD && $CLEANUP_CMD"
+fi
 
 echo $BENCH_CMD
 exit

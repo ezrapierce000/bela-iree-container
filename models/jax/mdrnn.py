@@ -6,13 +6,17 @@ from jax.nn import sigmoid
 from jax.nn import tanh
 from jax import numpy as jnp
 from jax import random as jrandom, lax, jit
-from numpy import random as nrandom
+import numpy as np
 from flax import linen as nn
 from collections import namedtuple
 
 mdrnn_units = 32
 mdrnn_mixes = 5
 mdrnn_layers = 2
+
+key = jax.random.PRNGKey(42)
+k1, k2, k3 = jax.random.split(key, 3)
+
 
 # Model Hyperparameters
 
@@ -28,27 +32,16 @@ x = jnp.ones(out_dim)
 cell_state = jnp.ones((1, hidden_units))
 hidden_state = jnp.ones((1, hidden_units))
 
+def_mus = jnp.ones((1, num_mixtures*out_dim))
+def_sigs = jnp.ones((1, num_mixtures*out_dim))
+def_pis = jnp.ones((1, num_mixtures))
+
+sigma_temp = 1.0
+
 params = Params(x, cell_state, hidden_state)
 
-@jit
-def softmax(w, t=1.0):
-  e = jnp.array(w) / t
-  e -= e.max()
-  e = jnp.exp(e)
-  dist = e / jnp.sum(e)
-  return dist
 
 
-def sample_from_output(mus, sigmas, pis):
-  pis = softmax(pis)
-  m = 5 # nrandom.choice(range(len(pis)), p=pis)
-  mus_vector = mus[m * out_dim:(m + 1) * out_dim]
-  sig_vector = sigmas# [m * out_dim:(m + 1) * out_dim]
-  scale_matrix = jnp.identity(out_dim) * sig_vector
-  cov_matrix = np.matmul(scale_matrix, scale_matrix.T)
-  cov_matrix = cov_matrix * sigma_temp
-  sample = nrandom.multivariate_normal(mus_vector, cov_matrix, 1)
-  return sample
 
 
 class MDRNN(nn.Module):
@@ -61,11 +54,20 @@ class MDRNN(nn.Module):
       # Three Dense layers then predict weights, centres & scales
       mdn_mus = nn.Dense(num_mixtures*out_dim)(outputs)
       mdn_sigmas = nn.elu(nn.Dense(num_mixtures*out_dim)(outputs))
-      mdn_pis = nn.Dense(num_mixtures)(outputs)
-      return sample_from_output(mdn_mus, mdn_sigmas, mdn_pis)
+      mdn_pis = nn.softmax(nn.Dense(num_mixtures)(outputs))
+      # m = jnp.array(jax.random.choice(k1, mdn_pis), int)[0]
+      return self.sample_from_output(mdn_mus, mdn_sigmas, mdn_pis)
 
-    
-    # defines shape of input?
+    def sample_from_output(self, mus, sigmas, pis):
+      m = jnp.array(jax.random.choice(k1, pis), int)[0]
+      # m = np.random.choice(range(len(pis)), p=pis)
+      mus_vector = lax.dynamic_slice_in_dim(mus, m * out_dim, out_dim, axis=1)
+      sig_vector = lax.dynamic_slice_in_dim(sigmas, m * out_dim, out_dim, axis=1)
+      scale_matrix = jnp.identity(out_dim) * sig_vector  # scale matrix from diag
+      cov_matrix = jnp.matmul(scale_matrix, scale_matrix.T)  # cov is scale squared.
+      cov_matrix = cov_matrix * sigma_temp  # adjust for sigma temperature
+      sample = jax.random.multivariate_normal(k2, mus_vector, cov_matrix, (1,1))
+      return sample
 
 mdrnn = MDRNN()
 
@@ -76,23 +78,26 @@ def init_params(rng):
   return params
 
 # Get initial parameters
-params = init_params(jax.random.PRNGKey(42))
+params = init_params(k3)
 
 class Empi(Program):
 
   _params = params
   _cell_state = cell_state
   _hidden_state = hidden_state
+  _mus = def_mus
+  _sigmas = def_sigs
+  _pis = def_pis
 
 
   def run(self, x=Program.like(x)):
-    mus, sigmas, pis = self._lstm((self._cell_state,self._hidden_state), x)
-    return mus, sigmas, pis
+    sample = self._lstm((self._cell_state,self._hidden_state), x)
+    return sample
 
   @Program.kernel
   def _lstm(carry, inp):
-    mus, sigmas, pis = mdrnn.apply({'params': params}, carry, inp)
-    return mus, sigmas, pis
+    sample = mdrnn.apply({'params': params}, carry, inp)
+    return sample
 
 
 model = Empi()
