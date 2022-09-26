@@ -3,7 +3,7 @@
 See IREE docs [here](https://github.com/iree-org/iree/blob/main/docs/developers/get_started/cmake_options_and_variables.md) for an overview of CMake flags.
 
 ## Host builds
-
+```
 	cmake  -B ../iree-build/ -S . \
 	    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
 	    -DIREE_ENABLE_ASSERTIONS=ON \
@@ -11,23 +11,24 @@ See IREE docs [here](https://github.com/iree-org/iree/blob/main/docs/developers/
 	    -DCMAKE_CXX_COMPILER=clang++ \
 	    -DCMAKE_C_COMPILER_LAUNCHER=ccache \
 	    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-
+```
 ## Device builds
 
-cmake -B /opt/iree-device-build/ -S . \
-	-DCMAKE_TOOLCHAIN_FILE="/home/cmake/Toolchain.cmake" \
-	-DIREE_HOST_BINARY_ROOT="/opt/iree-host-build" \
-	-DIREE_BUILD_COMPILER=OFF \
-	-DIREE_BUILD_TESTS=OFF \
-	-DIREE_BUILD_SAMPLES=ON \
-	-DIREE_DEVICE_SIZE=uint32_t \
-	-DIREE_TARGET_BACKEND_DEFAULTS=OFF \
-	-DIREE_TARGET_BACKEND_DYLIB_LLVM_AOT=ON \
-	-DIREE_TARGET_BACKEND_VMVX=ON \
-	-DIREE_HAL_DRIVER_DEFAULTS=OFF \
-	-DIREE_HAL_DRIVER_LOCAL_SYNC=ON \
-	-DIREE_HAL_EXECUTABLE_LOADER_EMBEDDED_ELF=ON
-
+	```
+	cmake -B /opt/iree-device-build/ -S . \
+		-DCMAKE_TOOLCHAIN_FILE="/home/cmake/Toolchain.cmake" \
+		-DIREE_HOST_BINARY_ROOT="/opt/iree-host-build" \
+		-DIREE_BUILD_COMPILER=OFF \
+		-DIREE_BUILD_TESTS=OFF \
+		-DIREE_BUILD_SAMPLES=ON \
+		-DIREE_DEVICE_SIZE=uint32_t \
+		-DIREE_TARGET_BACKEND_DEFAULTS=OFF \
+		-DIREE_TARGET_BACKEND_LLVM_CPU=ON \
+		-DIREE_TARGET_BACKEND_VMVX=ON \
+		-DIREE_HAL_DRIVER_DEFAULTS=OFF \
+		-DIREE_HAL_DRIVER_LOCAL_SYNC=ON \
+		-DIREE_HAL_EXECUTABLE_LOADER_EMBEDDED_ELF=ON
+	```
 Add -DIREE_BUILD_TRACY=ON for profiling support.
 
 ## Importing models

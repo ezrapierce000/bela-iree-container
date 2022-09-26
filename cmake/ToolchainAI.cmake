@@ -1,20 +1,19 @@
 
 # targets
 set(CMAKE_SYSTEM_NAME Linux)
-set(CMAKE_SYSTEM_PROCESSOR armv7a)
-set(triple arm-linux-gnueabihf)
+set(CMAKE_SYSTEM_PROCESSOR aarch64)
+set(triple aarch64-linux-gnu)
 
 # compiler settings
-set(CMAKE_C_COMPILER /usr/bin/arm-linux-gnueabihf-gcc CACHE STRING "")
-set(CMAKE_CXX_COMPILER /usr/bin/arm-linux-gnueabihf-g++ CACHE STRING "")
+set(CMAKE_C_COMPILER /usr/bin/aarch64-linux-gnu-gcc CACHE STRING "")
+set(CMAKE_CXX_COMPILER /usr/bin/aarch64-linux-gnu-g++ CACHE STRING "")
 set(CMAKE_C_COMPILER_TARGET ${triple})
 set(CMAKE_CXX_COMPILER_TARGET ${triple})
 set(CMAKE_C_COMPILER_EXTERNAL_TOOLCHAIN /usr/lib/llvm-15)
 set(CMAKE_CXX_COMPILER_EXTERNAL_TOOLCHAIN /usr/lib/llvm-15)
-add_link_options(-lstdc++ -pthread -lm -ldl -lrt) 
+add_link_options(-lstdc++ -pthread -lm -ldl -lrt)
 add_compile_options(-g -O3 -g -fPIC -ftree-vectorize -ffast-math -fno-omit-frame-pointer)
 add_compile_definitions(_GNU_SOURCE)
-
 
 set(CMAKE_CROSSCOMPILING ON CACHE BOOL "")
 set(CMAKE_C_EXTENSIONS ON)

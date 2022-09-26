@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 apt-get update
-apt-get install -y wget gpg apt-utils #apt-transport-https ca-certificates
+apt-get install -y wget gpg apt-utils curl #apt-transport-https ca-certificates
 
 # Add llvm and debian repos
 echo "deb http://http.us.debian.org/debian/ bullseye main contrib non-free" >> /etc/apt/sources.list.d/bullseye.list
@@ -24,6 +24,7 @@ apt-get install --no-install-recommends -y \
 	gcc-arm-linux-gnueabihf \
 	g++-arm-linux-gnueabihf \
 	binutils-arm-linux-gnueabihf \
+	debootstrap \
 	build-essential \
 	rsync \
 	ssh \
@@ -31,19 +32,31 @@ apt-get install --no-install-recommends -y \
 	gdb \
 	vim \
 	ccache \
-	python3 \
-	python3-pip \
 	lsb-release \
 	wget \
 	software-properties-common \
 	libcapstone-dev \
 	libtbb-dev \
-       	libzstd-dev \
-	pkg-config
-
-
-python3 -m pip install iree-tools-tflite tensorflow matplotlib fire
-pip install --pre torch-mlir  -f https://github.com/llvm/torch-mlir/releases --extra-index-url https://download.pytorch.org/whl/nightly/cpu
+	libzstd-dev \
+	pkg-config \
+	linux-perf \
+	kmod \
+	lzop \
+	cpio \
+	bc \
+	fakeroot \
+	man-db \
+	gettext \
+	libmpc-dev \
+	u-boot-tools \
+	libssl-dev:amd64 \
+	qemu \
+	qemu-user-static \
+	dh-autoreconf \
+	sshpass \
+	g++-aarch64-linux-gnu \
+	binutils-aarch64-linux-gnu \
+	gcc-aarch64-linux-gnu
 
 bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
 rm -rf /var/lib/apt/lists/*

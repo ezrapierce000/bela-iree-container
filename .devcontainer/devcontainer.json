@@ -4,27 +4,19 @@
 	"name": "xc-bela-with-iree",
 	"context": ".",
 	"image": "ezrapierce000/xc-bela-iree:latest",
-	"workspaceFolder": "/workspace",
 	"settings": {
 		"terminal.integrated.shell.linux": "/bin/bash",
 		"remote.containers.workspaceMountConsistency": "cached"
 	},
 	"runArgs": [
 		"--env-file", ".devcontainer/devcontainer.env",
-		"--network", "host",
 		"--cap-add=SYS_PTRACE",
 		"--security-opt", "seccomp=unconfined",
 	],
-	"workspaceMount": "source=xc-bela-src,target=/workspace,type=volume",
 	"mounts": [
 		"source=xc-bela-extensions,target=/root/.vscode-server/extensions,type=volume",
 		"source=xc-bela-bashhistory,target=/commandhistory,type=volume"
 	],
 	"extensions": [
-		"llvm-vs-code-extensions.vscode-clangd",
-		"webfreak.debug",
-		"twxs.cmake",
-		"ms-vscode.cmake-tools",
-		"ms-vscode.cpptools"
 	]
 }

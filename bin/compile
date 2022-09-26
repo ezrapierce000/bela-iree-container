@@ -1,0 +1,85 @@
+#!/bin/bash
+
+
+usage() { echo "Usage: $0 
+-i input-filename 
+-t target<bbb|bbai64|x86>
+-d input-dialect<mhlo|tosa|tflite>
+-f format<vm-bytecode|vm-c|vm-asm>
+-h hal-target-backend <vmvx|llvm-cpu|vulkan>
+-o output-filename
+" 1>&2; exit 1; }
+
+while getopts ":i:t:d:f:h:o:" opt; do
+    case "${opt}" in
+        i)
+            filename=${OPTARG}
+            ;;
+        t)
+            target=${OPTARG}
+            ;;
+		d)
+			input_type=${OPTARG}
+			;;
+		f)
+			format=${OPTARG}
+			;;
+		h)
+			hal_target_backend=${OPTARG}
+			;;
+		o)
+			output_file=${OPTARG}
+			;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+
+if [ ! -f $filename ]; then
+	echo "input file does not exist."
+	exit
+fi
+
+if [ -z $filename ] || [ -z $target ] || [ -z $input_type ] || [ -z $format ] || [ -z $output_file ] || [ -z $hal_target_backend ]; then
+	usage
+fi
+
+model_name=$(echo $filename | cut -d. -f1)
+
+if [[ $input_type == "tflite" ]]; then
+	iree-import-tflite $filename -o $model_name.mlir
+	input_file="$model_name.mlir"
+	input_dialect="tosa"
+else
+	input_dialect=$input_type
+	input_file=$filename
+fi
+
+
+OPTIONS="--iree-input-type=$input_dialect --iree-hal-target-backends=$hal_target_backend --output-format=$format "
+OPTIMIZATIONS="--iree-opt-const-eval --iree-stream-partitioning-favor=min-peak-memory --iree-vmvx-enable-microkernels --iree-opt-const-expr-hoisting --cost-kind=code-size"
+
+
+if [ $target == "bbb" ]; then
+	HW_OPTIONS=" --iree-llvm-target-triple=armv7a-linux-eabi --iree-llvm-target-float-abi=hard"
+	MORE="--iree-llvm-target-cpu-features=armv7-a --iree-hal-dump-executable-benchmarks-to=siren-hal-bench.mlir --iree-flow-export-benchmark-funcs"
+elif [ $target == "bbai64" ]; then
+	HW_OPTIONS="--iree-llvm-target-triple=aarch64-pc-linux-eabi "
+elif [ $target == "x86" ]; then
+	HW_OPTIONS="--iree-llvm-target-triple=x86_64-pc-linux-elf" 
+else
+	echo "platform not supported"
+fi
+
+
+	/opt/iree-host-build/bin/iree-compile $OPTIONS $OPTIMIZATIONS $HW_OPTIONS $input_file -o $output_file
+
+if [ $? -eq 0 ]; then
+   echo "compiled to $output_file"
+   exit 1
+else
+   echo "compilation failed"
+   exit 0
+fi

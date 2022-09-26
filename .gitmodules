@@ -8,3 +8,6 @@
 [submodule "models/embedded-model-zoo"]
 	path = models/embedded-model-zoo
 	url = git@github.com:victor-shepardson/embedded-model-zoo.git
+[submodule "bela-iree-runtime"]
+	path = bela-iree-runtime
+	url = git@github.com:ezrapierce000/bela-iree-runtime.git

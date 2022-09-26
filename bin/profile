@@ -1,0 +1,93 @@
+#!/bin/bash
+
+usage() { echo "Usage: $0 
+-f filename 
+-m perf mode <stat|record>
+-s sample-rate for perf
+-e entry-function
+-l list-of-events
+-i inputs(ex: 1x4xf32=[0 4 1 3],1x4xf32=[5 2 0 0]) 
+-d device-ip(default: 192.168.7.2)
+
+profile recordings are copied into /tmp/filename" 1>&2; exit 1; }
+
+while getopts ":f:e:s:i:d:m:l:" opt; do
+    case "${opt}" in
+        f)
+            filename=${OPTARG}
+            ;;
+		m)
+			mode=${OPTARG}
+			;;
+		s)
+			sample_rate=${OPTARG}
+			;;
+		e)
+			function=${OPTARG}
+			;;
+		l)
+			events=${OPTARG}
+			;;
+		d)
+			device_ip=${OPTARG}
+			;;
+		i)
+			inputs=${OPTARG}
+			;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+
+if [ -z $filename ] ||  [ -z $function ] || [ -z $inputs ] || [ -z $mode ]; then
+	usage
+fi
+
+if [ ! -f $filename ]; then
+	echo "input file does not exist."
+	exit
+fi
+
+# check for benchmark utility on board first
+
+
+if ! ssh root@$device_ip "test -e /opt/iree-benchmark-module" ; then
+	echo "Bela does not have iree benchmark utility installed, attempting to copy over..."
+	scp /opt/iree-bela-build/tools/iree-benchmark-module root@$device_ip:/opt/iree-benchmark-module
+fi
+
+
+name=$(basename $filename)
+
+function_inputs=""
+for i in ${inputs//,/ }
+do
+    function_inputs="$function_inputs --function_input=$i"
+done
+
+
+mkdir -p /tmp/profiles/$name
+PROFILE_DIR=/tmp/profiles/$name
+
+if [ $mode == "record" ]; then
+	PROFILER_CMD="IREE_PRESERVE_DYLIB_TEMP_FILES=1 perf_5.10 record -F $sample_rate -g --event $events --call-graph fp -o /root/perf.data "
+else
+	PROFILER_CMD="IREE_PRESERVE_DYLIB_TEMP_FILES=1 perf_5.10 stat --event $events record -o /root/perf.data "
+fi
+SETUP_CMD="cd /tmp"
+CLEANUP_CMD="cd /tmp && rm /tmp/$name && rm /root/perf.data"
+
+BENCH_CMD="/opt/iree-benchmark-module --module_file=/tmp/$name --device=local-sync:// $function_inputs --entry_function=$function --benchmark_repetitions=1"
+scp $filename root@$device_ip:/tmp/
+ssh $device_ip "$SETUP_CMD && $PROFILER_CMD $BENCH_CMD "
+
+
+scp root@$device_ip:/root/perf.data $PROFILE_DIR/perf.data
+scp root@$device_ip:/proc/kallsyms $PROFILE_DIR/kallsyms
+
+ssh $device_ip $CLEANUP_CMD
+
+echo $PROFILER_CMD
+exit

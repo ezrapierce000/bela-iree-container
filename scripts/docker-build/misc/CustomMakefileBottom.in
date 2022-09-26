@@ -1,0 +1,8 @@
+LIB_FULL_A = libbelafull.a
+LIB_FULL_OBJS = build/*/*.o libraries/*/build/*.o
+
+lib/$(LIB_FULL_A): $(LIB_FULL_OBJS) $(PRU_OBJS) $(LIB_DEPS)
+	$(AT) echo Building lib/$(LIB_FULL_A)
+	$(AT) ar rcs lib/$(LIB_FULL_A) $(LIB_FULL_OBJS)
+
+libbelafull: lib/libbelafull.a
