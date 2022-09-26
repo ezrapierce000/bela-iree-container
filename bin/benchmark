@@ -2,7 +2,7 @@
 
 usage() { echo "Usage: $0 
 -f filename 
--t targetname 
+-t targetname  <bbb|bbai64>
 -r repetitions 
 -e entry-function 
 -i inputs(ex: 1x4xf32=[0 4 1 3],1x4xf32=[5 2 0 0]) 
@@ -21,7 +21,6 @@ while getopts ":f:t:r:e:i:d:" opt; do
 			;;
 		e)
 			function=${OPTARG}
-			echo $function
 			;;
 		i)
 			inputs=${OPTARG}
@@ -48,18 +47,19 @@ fi
 
 # check for benchmark utility on board first
 
-if [ $target == "bbb"]; then
+if [ $target == "bbb" ]; then
 	if ! ssh root@$device_ip "test -e /opt/iree-benchmark-module" ; then
 		echo "Bela does not have iree benchmark utility installed, attempting to copy over..."
-		scp /opt/iree-device-build/tools/iree-benchmark-module root@$device_ip:/opt/iree-benchmark-module
+		scp /opt/iree-bela-build/tools/iree-benchmark-module root@$device_ip:/opt/iree-benchmark-module
 	fi
 elif [ $target == "bbai64" ]; then
 	if ! sshpass -p 'temppwd' ssh debian@$device_ip "test -e /opt/iree-benchmark-module" ; then
 		echo "BBAI64 does not have iree benchmark utility installed, attempting to copy over..."
 		sshpass -p 'temppwd' scp /opt/iree-ai-build/tools/iree-benchmark-module debian@$device_ip:/home/debian/iree-benchmark-module
 	fi
+else
+	usage
 fi
-
 
 name=$(basename $filename)
 

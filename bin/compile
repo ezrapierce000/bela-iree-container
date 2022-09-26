@@ -58,15 +58,15 @@ else
 fi
 
 
-OPTIONS="--iree-input-type=$input_dialect --iree-hal-target-backends=$hal_target_backend --output-format=$format --compile-mode=std "
-OPTIMIZATIONS="--iree-opt-const-eval --iree-stream-partitioning-favor=min-peak-memory  --iree-opt-const-expr-hoisting --cost-kind=code-size"
+OPTIONS="--iree-input-type=$input_dialect --iree-hal-target-backends=$hal_target_backend --output-format=$format "
+OPTIMIZATIONS="--iree-opt-const-eval --iree-stream-partitioning-favor=min-peak-memory --iree-vmvx-enable-microkernels --iree-opt-const-expr-hoisting --cost-kind=code-size"
 
 
 if [ $target == "bbb" ]; then
-	HW_OPTIONS=" --iree-llvm-target-triple=armv7a-linux-eabi --iree-llvm-target-float-abi=hard --arm-implicit-it=always"
+	HW_OPTIONS=" --iree-llvm-target-triple=armv7a-linux-eabi --iree-llvm-target-float-abi=hard"
 	MORE="--iree-llvm-target-cpu-features=armv7-a --iree-hal-dump-executable-benchmarks-to=siren-hal-bench.mlir --iree-flow-export-benchmark-funcs"
 elif [ $target == "bbai64" ]; then
-	HW_OPTIONS="--iree-llvm-target-triple=aarch64-pc-linux-eabi"
+	HW_OPTIONS="--iree-llvm-target-triple=aarch64-pc-linux-eabi "
 elif [ $target == "x86" ]; then
 	HW_OPTIONS="--iree-llvm-target-triple=x86_64-pc-linux-elf" 
 else
@@ -76,6 +76,10 @@ fi
 
 	/opt/iree-host-build/bin/iree-compile $OPTIONS $OPTIMIZATIONS $HW_OPTIONS $input_file -o $output_file
 
-echo "compiled to $output_file"
-
-exit 1
+if [ $? -eq 0 ]; then
+   echo "compiled to $output_file"
+   exit 1
+else
+   echo "compilation failed"
+   exit 0
+fi

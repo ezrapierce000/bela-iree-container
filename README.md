@@ -4,10 +4,13 @@ This project is based on a fork of the [xc-bela-container](https://github.com/ro
 
 By containerizing the cross-compilation toolchain, Bela code can be written and compiled on any host OS that can run Docker, and is compiled much faster and with more flexibility than in the Bela IDE. The VSCode environment is also set up for running GDB over SSH, allowing you to debug your Bela programs in the editor. This repo is set up to be used with VSCode.
 
-
 ## Quickstart
 
+### Prequisites
+
 This project is built with Docker, you can see instructions for installing it [here](https://docs.docker.com/get-docker/).
+
+You should also have a Bela with a Debian Bullseye image installed (>v0.5a) as well as the linux-perf package if you want to record profiles (`sudo apt install linux-perf`)
 
 Once Docker is installed, you can continue the setup using just the command line or using VSCode, both options are shown below.
 
@@ -23,7 +26,7 @@ Install the Docker and [Remote Development](https://marketplace.visualstudio.com
 
 Open the repo folder in VSCode and run the command `Remote-Containers: Reopen in Container`  or click the popup when prompted, ensure that the environment variables are set accordingly based on the Environment Variables section. This will download the image, install a few extensions and attach the editor to the container.
 
-Once the Docker container has been opened, move to `/workspaces/bela-iree-container/scripts`, ensure your Bela is connected and execute the benchmark-test.sh script. This will copy over the iree-benchmark-module tool and runs a benchmark on a single multiply between two 4xf32 values.
+
 
 ### Command Line
 
@@ -43,7 +46,9 @@ Now, with Bela powered on, change directories, `cd /home/scripts` and run a test
 
 ## Importing and Compiling models using IREE
 
-To import and compile a model using IREE, use the `compile` command.
+Once you are in the container, move to `/workspaces/bela-iree-container/models/embedded-model-zoo` and run `conda activate zoo && python -m zoo`. This will create some untrained models for you to try compiling and benchmarking. Alternatively you can load you own TFLite, TOSA or MHLO files.
+
+To compile your models into the IREE flatbuffers you can use the `compile` utility. To see how to use the utility simply run the command with no options. You can see more in depth documentation from the iree compiler by running `iree-compile --help`.
 
 ## Performance analysis
 
@@ -51,11 +56,7 @@ Once you have an IREE module compiled, you can benchmark and profile it on Bela.
 
 ### Benchmarking using iree-benchmark-module
 
-To benchmark a model on Bela use the `benchmark` command.
-
-TODO: Note on how to find entry function name and input sizes.
-
-
+To benchmark a model on Bela use the `benchmark` command. Once again, run the utility with no options to see how to use it. This utility requires you to already have a compiled VMFB file in either VMVX bytecode or LLVMIR.
 ### Profiling 
 
 To profile a model on Bela use the `profile` command.
