@@ -1,5 +1,6 @@
 
 import jax
+import functools
 from iree.jax import Program
 from jax.nn import relu
 from jax.nn import sigmoid
@@ -10,21 +11,16 @@ import numpy as np
 from flax import linen as nn
 from collections import namedtuple
 
-mdrnn_units = 32
-mdrnn_mixes = 5
-mdrnn_layers = 2
-
+# JAX random number generation keys
 key = jax.random.PRNGKey(42)
 k1, k2, k3 = jax.random.split(key, 3)
 
-
 # Model Hyperparameters
-
 hidden_units=64
 num_mixtures=5
 layers=2
 out_dim=2
-
+sigma_temp = 1.0
 
 Params = namedtuple("params", "x,c,h")
 
@@ -36,12 +32,7 @@ def_mus = jnp.ones((1, num_mixtures*out_dim))
 def_sigs = jnp.ones((1, num_mixtures*out_dim))
 def_pis = jnp.ones((1, num_mixtures))
 
-sigma_temp = 1.0
-
 params = Params(x, cell_state, hidden_state)
-
-
-
 
 
 class MDRNN(nn.Module):
@@ -51,7 +42,7 @@ class MDRNN(nn.Module):
       carry, inputs = nn.OptimizedLSTMCell()(carry,inputs)
       # LSTM layer 2
       carry, outputs = nn.OptimizedLSTMCell()(carry,inputs)
-      # Three Dense layers then predict weights, centres & scales
+      # Three Dense layers that predict weights, centres & scales of gaussians
       mdn_mus = nn.Dense(num_mixtures*out_dim)(outputs)
       mdn_sigmas = nn.elu(nn.Dense(num_mixtures*out_dim)(outputs))
       mdn_pis = nn.softmax(nn.Dense(num_mixtures)(outputs))
@@ -71,7 +62,6 @@ class MDRNN(nn.Module):
 
 mdrnn = MDRNN()
 
-
 @jit
 def init_params(rng):
   params = mdrnn.init(rng, (cell_state, hidden_state), x)['params']
@@ -85,10 +75,6 @@ class Empi(Program):
   _params = params
   _cell_state = cell_state
   _hidden_state = hidden_state
-  _mus = def_mus
-  _sigmas = def_sigs
-  _pis = def_pis
-
 
   def run(self, x=Program.like(x)):
     sample = self._lstm((self._cell_state,self._hidden_state), x)
@@ -99,7 +85,12 @@ class Empi(Program):
     sample = mdrnn.apply({'params': params}, carry, inp)
     return sample
 
-
 model = Empi()
 
 print(Program.get_mlir_module(model))
+"""
+f = functools.partial(mdrnn.apply, params)
+z = jax.xla_computation(f)((cell_state, hidden_state), x)
+with open("t2.dot", "w") as f:
+    f.write(z.as_hlo_dot_graph())
+"""
